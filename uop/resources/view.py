@@ -424,8 +424,8 @@ class ResourceApplication(Resource):
                     result['deploy_source'] = ""
                 expiry_date = resource.expiry_date
                 if expiry_date and expiry_date != "long" :
-                    expiry_date = datetime.datetime.strptime(expiry_date, "%Y-%m-%d")
-                    if datetime.datetime.now() - expiry_date > 0:
+                    expiry_datetime = datetime.datetime.strptime(expiry_date, "%Y-%m-%d")
+                    if datetime.datetime.now() - expiry_datetime > 0:
                         result['is_expired'] = 1
                 resource_id = resource.res_id
                 deploys = Deployment.objects.filter(resource_id=resource_id).order_by("-created_time")
