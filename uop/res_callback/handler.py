@@ -466,6 +466,7 @@ def format_put_data_cmdb(data, req_data):
 
 @async
 def send_email_res(resource_id, code):
+    email_content = ''
     resource_obj = ResourceModel.objects.filter(res_id=resource_id,is_deleted=0)
     if resource_obj:
         Log.logger.info("3333333333333333333333333333333333333333333")
@@ -474,10 +475,10 @@ def send_email_res(resource_id, code):
         user_emails = resource_obj[0].user_emails
         if not user_emails:
             return
-        if code == 200:
+        if code == '200':
             user_name = resource_obj[0].user_name
             email_content = resource_obj[0].mail_content
-        elif code == 100:
+        elif code == '100':
             user_name = "UOP"
             business_name = resource_obj.business_name
             module_name = resource_obj.module_name
