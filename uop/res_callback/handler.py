@@ -495,11 +495,12 @@ def send_email_res(resource_id, code):
                 text = "\n ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
                 content = content + text
             email_content = content
+        email_list = user_emails
         Log.logger.info("444444444444444444444444444444444444444444444444444444444444444")
         send = SendEmail(
             username=user_name,
             content=email_content,
-            email_address=user_emails,
+            email_address=email_list,
             cc_email_address=cc_emails,
             subject_type=code
         )
