@@ -484,8 +484,7 @@ def send_email_res(resource_id, code):
             resource_name = resource_obj[0].resource_name
             resource_type = resource_obj[0].resource_type
             os_ins_ip_list = resource_obj[0].os_ins_ip_list
-            content = """您好：
-            %s资源：%s已经创建成功，业务：%s，模块：%s。""" % (resource_type, resource_name, business_name, module_name)
+            content = """您好：\n\t%s资源：%s已经创建成功，业务：%s，模块：%s。""" % (resource_type, resource_name, business_name, module_name)
             for os_ins in os_ins_ip_list:
                 ip = getattr(os_ins, "ip")
                 username = getattr(os_ins, "username")
