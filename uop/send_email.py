@@ -38,6 +38,7 @@ class SendEmail(object):
         self.subject = self.subjects.get(subject_type)
 
     def send_email(self):
+        Log.logger.info("55555555555555555555555555555555555555555555555555")
         message = MIMEText(
             '%s' %
             self.content, 'plain', 'utf-8'
@@ -45,6 +46,7 @@ class SendEmail(object):
         message['From'] = _format_addr(u"UOP <%s>" % self.sender)
         message['Subject'] = Header(self.subject, 'utf-8')
         try:
+            Log.logger.info("6666666666666666666666666666666666666666666666666666")
             smtpObj = smtplib.SMTP(self.email_server)
             message['To'] = ";".join(self.email_address)
             message['Cc'] = ";".join(self.cc_email_address)
