@@ -470,6 +470,7 @@ def send_email_res(resource_id, code):
     email_content = ""
     resource_obj = ResourceModel.objects.filter(res_id=resource_id,is_deleted=0)
     if resource_obj:
+        Log.logger.info("3333333333333333333333333333333333333333333")
         user_name = resource_obj[0].user_name
         cc_emails = resource_obj[0].cc_emails
         user_emails = resource_obj[0].user_emails
@@ -494,6 +495,7 @@ def send_email_res(resource_id, code):
                 text = "\n ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
                 content = content + text
             email_content = content
+        Log.logger.info("444444444444444444444444444444444444444444444444444444444444444")
         send = SendEmail(
             username=user_name,
             content=email_content,
