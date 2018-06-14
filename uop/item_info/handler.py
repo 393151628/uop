@@ -12,7 +12,7 @@ from uop.util import TimeToolkit, response_data,async
 from config import configs, APP_ENV
 from datetime import datetime
 from uop.models import Cmdb, Token, ModelCache, ResourceModel, Statusvm, ItemInformation
-from uop.res_callback.handler import get_relations, format_data_cmdb, judge_value_format
+from uop.res_callback.handler import get_relations, format_data_cmdb, judge_value_format, get_scene_graph
 import base64
 import uuid
 
@@ -586,7 +586,11 @@ def to_Cmdb2(args, exchange_project_item_id=False):
     models_list = data["entity"]
     if isinstance(models_list, str):
         return models_list
-    model = filter(lambda x:x["entity_id"] == next_model_id, models_list)[0]
+    try:
+        model = filter(lambda x:x["entity_id"] == next_model_id, models_list)[0]
+    except Exception as e:
+        _, entity = get_scene_graph(CMDB2_VIEWS["3"][0])
+        model = filter(lambda x:x["entity_id"] == next_model_id, entity)[0]
     # Log.logger.info("The model is {}".format(model))
     item = {}
     nouse = map(lambda pro: item.setdefault(pro["code"], pro["value"]), property)

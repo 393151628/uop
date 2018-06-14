@@ -950,6 +950,40 @@ def format_data_cmdb(relations, item, model, attach, index, up_level, physical_s
     return i, rels
 
 
+def get_scene_graph(view_id):
+    relations = []
+    uid, token = get_uid_token()
+    url = CMDB2_URL + "cmdb/openapi/scene_graph/list/"
+    data = {
+        "uid": uid,
+        "token": token,
+        "sign": "",
+        "data": {
+            "id": "",
+            "name": view_id
+        }
+    }
+    data_str = json.dumps(data)
+    try:
+        ret = requests.post(url, data=data_str, timeout=5).json()
+        if ret["code"] == 0:
+            relations = ret["data"][0]["relation"]  # 获取视图关系实体信息
+            entity = ret["data"][0]["entity"]  # 获取视图实体信息
+            view = ViewCache(view_id=view_id, relation=json.dumps(relations), entity=json.dumps(entity), cache_date=TimeToolkit.local2utctimestamp(datetime.datetime.now()))
+            view.save()
+        elif ret["code"] == 121:
+            data["uid"], data["token"] = get_uid_token(True)
+            data_str = json.dumps(data)
+            ret = requests.post(url, data=data_str, timeout=5).json()
+            relations = ret["data"][0]["relation"]  # 获取视图关系实体信息,
+            entity = ret["data"][0]["entity"]  # 获取视图实体信息
+            view = ViewCache(view_id=view_id, relation=json.dumps(relations), entity=json.dumps(entity), cache_date=TimeToolkit.local2utctimestamp(datetime.datetime.now()))
+            view.save()
+    except Exception as exc:
+        Log.logger.error("get_relations error: {}".format(str(exc)))
+    return relations, entity
+
+
 # B类视图list，获取已经定义的关系列表
 def get_relations(view_id):
     '''
@@ -967,37 +1001,7 @@ def get_relations(view_id):
         relations = json.loads(views.relation)
         entity = json.loads(views.entity)
     if not relations:
-        uid, token = get_uid_token()
-        url = CMDB2_URL + "cmdb/openapi/scene_graph/list/"
-        data = {
-            "uid": uid,
-            "token": token,
-            "sign": "",
-            "data": {
-                "id": "",
-                "name": view_id
-            }
-        }
-        data_str = json.dumps(data)
-        try:
-            ret = requests.post(url, data=data_str, timeout=5).json()
-            if ret["code"] == 0:
-                relations = ret["data"][0]["relation"]  # 获取视图关系实体信息
-                entity = ret["data"][0]["entity"]  # 获取视图实体信息
-                view = ViewCache(view_id=view_id, relation=json.dumps(relations), entity=json.dumps(entity), cache_date=TimeToolkit.local2utctimestamp(datetime.datetime.now()))
-                view.save()
-            elif ret["code"] == 121:
-                data["uid"], data["token"] = get_uid_token(True)
-                data_str = json.dumps(data)
-                ret = requests.post(url, data=data_str, timeout=5).json()
-                relations = ret["data"][0]["relation"]  # 获取视图关系实体信息,
-                entity = ret["data"][0]["entity"]  # 获取视图实体信息
-                view = ViewCache(view_id=view_id, relation=json.dumps(relations), entity=json.dumps(entity), cache_date=TimeToolkit.local2utctimestamp(datetime.datetime.now()))
-                view.save()
-            else:
-                Log.logger.info("get_relations data:{}".format(ret))
-        except Exception as exc:
-            Log.logger.error("get_relations error: {}".format(str(exc)))
+        relations, entity = get_scene_graph(view_id)
     data["relations"] = relations
     data["entity"] = entity
     return data
