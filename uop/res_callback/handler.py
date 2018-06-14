@@ -466,8 +466,7 @@ def format_put_data_cmdb(data, req_data):
 
 @async
 def send_email_res(resource_id, code):
-    email_list = []
-    email_content = ""
+    email_content = ''
     resource_obj = ResourceModel.objects.filter(res_id=resource_id,is_deleted=0)
     if resource_obj:
         user_name = resource_obj[0].user_name
@@ -475,25 +474,25 @@ def send_email_res(resource_id, code):
         user_emails = resource_obj[0].user_emails
         if not user_emails:
             return
-        if code == 200:
+        if code == '200':
             user_name = resource_obj[0].user_name
             email_content = resource_obj[0].mail_content
-        elif code == 100:
+        elif code == '100':
             user_name = "UOP"
-            business_name = resource_obj.business_name
-            module_name = resource_obj.module_name
-            resource_name = resource_obj.resource_name
-            resource_type = resource_obj.resource_type
-            os_ins_ip_list = resource_obj.os_ins_ip_list
-            content = """您好 %s：
-            %s资源：%s已经创建成功，业务：%s，模块：%s。""" % (user_name,resource_type, resource_name, business_name, module_name)
+            business_name = resource_obj[0].business_name
+            module_name = resource_obj[0].module_name
+            resource_name = resource_obj[0].resource_name
+            resource_type = resource_obj[0].resource_type
+            os_ins_ip_list = resource_obj[0].os_ins_ip_list
+            content = """您好：\n\t%s资源：%s已经创建成功，业务：%s，模块：%s。""" % (resource_type, resource_name, business_name, module_name)
             for os_ins in os_ins_ip_list:
                 ip = getattr(os_ins, "ip")
                 username = getattr(os_ins, "username")
                 password = getattr(os_ins, "password")
-                text = "\n ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
+                text = "\n\t ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
                 content = content + text
             email_content = content
+        email_list = user_emails
         send = SendEmail(
             username=user_name,
             content=email_content,

@@ -384,6 +384,7 @@ class ResourceApplication(Resource):
             return ret,500
         if len(resources):
             for resource in resources:
+                resource_id = resource.res_id
                 result = dict()
                 result['name'] = resource.user_name
                 result['date'] = str(resource.created_date)
@@ -400,7 +401,7 @@ class ResourceApplication(Resource):
                 result['cmdb2_module_id'] = resource.cmdb2_module_id
 
                 result['project_id'] = resource.project_id
-                result['id'] = resource.res_id
+                result['id'] = resource_id
                 result['reservation_status'] = resource.reservation_status
                 result['env'] = resource.env
                 result['is_rollback'] = resource.is_rollback
@@ -423,9 +424,11 @@ class ResourceApplication(Resource):
                 else:
                     result['deploy_source'] = ""
                 expiry_date = resource.expiry_date
-                # if expiry_date and expiry_date != "long" and  datetime.datetime.now() - expiry_date > 0:
-                #     result['is_expired'] = 1
-                resource_id = resource.res_id
+                if expiry_date and expiry_date != "long" :
+                    expiry_datetime = datetime.datetime.strptime(expiry_date, "%Y-%m-%d")
+                    if datetime.datetime.now() > expiry_datetime:
+                        result['is_expired'] = 1
+
                 deploys = Deployment.objects.filter(resource_id=resource_id).order_by("-created_time")
                 if deploys:
                     dep = deploys[0]
@@ -529,7 +532,7 @@ class ResourceApplication(Resource):
         mail_content = args.mail_content
         admin_emails = args.admin_emails
         cc_emails = args.cc_emails
-        user_emails = args.uesr_emails
+        user_emails = args.user_emails
         try:
             resource = ResourceModel.objects.get(res_id=res_id)
             if resource:

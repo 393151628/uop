@@ -7,7 +7,7 @@ from email.header import Header
 from email.utils import parseaddr, formataddr
 from uop.log import Log
 email_server = 'casarray.syswin.com'
-sender = 'zhanghai@syswin.com'
+sender = 'uop@syswin.com'
 subjects = {
     '100': u'创建虚机资源成功',
     '200': u'申请虚机资源成功',

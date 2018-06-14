@@ -775,7 +775,7 @@ class ResourceProviderCallBack(Resource):
         resource_id = request_data.get("resource_id")
         status = request_data.get('status')
         set_flag = request_data.get('set_flag')
-        if status == "ok"  and set_flag == "res":
+        if status == "ok" and set_flag == "res":
             #其他资源创建成功，异步发邮件
             send_email_res(resource_id, '100')
         # 异步存到CMDB2
