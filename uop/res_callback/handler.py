@@ -469,7 +469,6 @@ def send_email_res(resource_id, code):
     email_content = ''
     resource_obj = ResourceModel.objects.filter(res_id=resource_id,is_deleted=0)
     if resource_obj:
-        Log.logger.info("3333333333333333333333333333333333333333333")
         user_name = resource_obj[0].user_name
         cc_emails = resource_obj[0].cc_emails
         user_emails = resource_obj[0].user_emails
@@ -485,17 +484,16 @@ def send_email_res(resource_id, code):
             resource_name = resource_obj[0].resource_name
             resource_type = resource_obj[0].resource_type
             os_ins_ip_list = resource_obj[0].os_ins_ip_list
-            content = """您好 %s：
-            %s资源：%s已经创建成功，业务：%s，模块：%s。""" % (user_name,resource_type, resource_name, business_name, module_name)
+            content = """您好：
+            %s资源：%s已经创建成功，业务：%s，模块：%s。""" % (resource_type, resource_name, business_name, module_name)
             for os_ins in os_ins_ip_list:
                 ip = getattr(os_ins, "ip")
                 username = getattr(os_ins, "username")
                 password = getattr(os_ins, "password")
-                text = "\n ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
+                text = "\n\t ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
                 content = content + text
             email_content = content
         email_list = user_emails
-        Log.logger.info("444444444444444444444444444444444444444444444444444444444444444 {}".format(email_content))
         send = SendEmail(
             username=user_name,
             content=email_content,
