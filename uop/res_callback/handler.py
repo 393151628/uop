@@ -480,11 +480,11 @@ def send_email_res(resource_id, code):
             email_content = resource_obj[0].mail_content
         elif code == '100':
             user_name = "UOP"
-            business_name = resource_obj.business_name
-            module_name = resource_obj.module_name
-            resource_name = resource_obj.resource_name
-            resource_type = resource_obj.resource_type
-            os_ins_ip_list = resource_obj.os_ins_ip_list
+            business_name = resource_obj[0].business_name
+            module_name = resource_obj[0].module_name
+            resource_name = resource_obj[0].resource_name
+            resource_type = resource_obj[0].resource_type
+            os_ins_ip_list = resource_obj[0].os_ins_ip_list
             content = """您好 %s：
             %s资源：%s已经创建成功，业务：%s，模块：%s。""" % (user_name,resource_type, resource_name, business_name, module_name)
             for os_ins in os_ins_ip_list:
