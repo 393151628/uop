@@ -531,7 +531,7 @@ class ResourceApplication(Resource):
         mail_content = args.mail_content
         admin_emails = args.admin_emails
         cc_emails = args.cc_emails
-        user_emails = args.uesr_emails
+        user_emails = args.user_emails
         try:
             resource = ResourceModel.objects.get(res_id=res_id)
             if resource:
