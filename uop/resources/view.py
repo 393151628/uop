@@ -384,6 +384,7 @@ class ResourceApplication(Resource):
             return ret,500
         if len(resources):
             for resource in resources:
+                resource_id = resource.res_id
                 result = dict()
                 result['name'] = resource.user_name
                 result['date'] = str(resource.created_date)
@@ -400,7 +401,7 @@ class ResourceApplication(Resource):
                 result['cmdb2_module_id'] = resource.cmdb2_module_id
 
                 result['project_id'] = resource.project_id
-                result['id'] = resource.res_id
+                result['id'] = resource_id
                 result['reservation_status'] = resource.reservation_status
                 result['env'] = resource.env
                 result['is_rollback'] = resource.is_rollback
@@ -427,7 +428,7 @@ class ResourceApplication(Resource):
                     expiry_datetime = datetime.datetime.strptime(expiry_date, "%Y-%m-%d")
                     if datetime.datetime.now() > expiry_datetime:
                         result['is_expired'] = 1
-                resource_id = resource.res_id
+
                 deploys = Deployment.objects.filter(resource_id=resource_id).order_by("-created_time")
                 if deploys:
                     dep = deploys[0]
