@@ -351,7 +351,7 @@ def expire_resource_warn():
     ten_day = (now + datetime.timedelta(days=10)).strftime("%Y-%m-%d")
 
     resources = ResourceModel.objects.filter(
-        is_deleted=0, leader_emails__exists=True, leader_emails__ne=[]).filter(
+        is_deleted=0, user_emails__exists=True, user_emails__ne=[]).filter(
             expiry_date__gt=today, expiry_date__lte=ten_day, expiry_date__nin=['long', '', None])
 
     for res in resources:
@@ -362,7 +362,7 @@ def expire_resource_warn():
             send = SendEmail(
                 username=res.user_name,
                 content=content,
-                email_address=res.leader_emails,
+                email_address=res.user_emails,
                 cc_email_address = res.cc_emails,
                 subject_type='300',
             )
