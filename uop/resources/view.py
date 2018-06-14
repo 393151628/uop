@@ -422,6 +422,7 @@ class ResourceApplication(Resource):
                         # Log.logger.debug("the resource compute deploy_source is:{}".format(i.deploy_source))
                 else:
                     result['deploy_source'] = ""
+                expiry_date = resource.expiry_date
                 if expiry_date and expiry_date != "long" :
                     expiry_date = datetime.datetime.strptime(resource.expiry_date, "%Y-%m-%d")
                     if datetime.datetime.now() - expiry_date > 0:
