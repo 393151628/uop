@@ -499,7 +499,7 @@ def send_email_res(resource_id, code):
         send = SendEmail(
             username=user_name,
             content=email_content,
-            email_address=email_list,
+            email_address=user_emails,
             cc_email_address=cc_emails,
             subject_type=code
         )
