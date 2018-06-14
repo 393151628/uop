@@ -424,7 +424,7 @@ class ResourceApplication(Resource):
                 else:
                     result['deploy_source'] = ""
                 expiry_date = resource.expiry_date
-                if expiry_date and expiry_date != "long" and resource.approval_status == "success":
+                if expiry_date and expiry_date != "long" and resource.approval_status != "processing":
                     expiry_datetime = datetime.datetime.strptime(expiry_date, "%Y-%m-%d")
                     if datetime.datetime.now() > expiry_datetime:
                         result['is_expired'] = 1
