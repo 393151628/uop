@@ -117,7 +117,7 @@ class UserLogin(Resource):
                 user.last_login_time=datetime.datetime.now()
                 user.save()
                 role=user.role
-                #menu_list,buttons,icons,operations=get_login_permission(role)
+                menu_list,buttons,icons,operations=get_login_permission(role)
                 code = 200
                 msg = u'登录成功'
                 res = {
@@ -125,6 +125,10 @@ class UserLogin(Resource):
                     'username': user.username,
                     'department': user.department,
                     'role':user.role,
+                    'menu_list':menu_list,
+                    'buttons': buttons,
+                    'icons': icons,
+                    'operations': operations,
                 }
             else:
                 msg = u'登录失败'
@@ -160,12 +164,16 @@ class UserLogin(Resource):
                     user_obj.role=role
                     user_obj.save()
                     add_person(user, user_id, department, "","")
-                    #menu_list, buttons, icons, operations = get_login_permission(role)
+                    menu_list, buttons, icons, operations = get_login_permission(role)
                 res = {
                     'user_id': user_id,
                     'username': user,
                     'department': department,
                     'role': role,
+                    'menu_list': menu_list,
+                    'buttons': buttons,
+                    'icons': icons,
+                    'operations': operations,
                 }
             else:
                 msg = u'登录失败'
