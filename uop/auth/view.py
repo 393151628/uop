@@ -52,7 +52,6 @@ class LdapConn(object):
         filter_field = "(&(|(cn=*%(input)s*)(sAMAccountName=*%(input)s*))(sAMAccountName=*))" % {'input': id}
         attrs = ['sAMAccountName', 'mail', 'givenName', 'sn', 'department', 'telephoneNumber', 'displayName']
         for i in con.search_s(base_dn, scope, filter_field, None):
-            Log.logger.info("111111111111111111111{}".format(i))
             if i[0]:
                 d = {}
                 for k in i[1]:
