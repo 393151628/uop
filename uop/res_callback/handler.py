@@ -952,6 +952,7 @@ def format_data_cmdb(relations, item, model, attach, index, up_level, physical_s
 
 def get_scene_graph(view_id):
     relations = []
+    entity = {}
     uid, token = get_uid_token()
     url = CMDB2_URL + "cmdb/openapi/scene_graph/list/"
     data = {
