@@ -10,7 +10,7 @@ email_server = 'casarray.syswin.com'
 sender = 'uop@syswin.com'
 subjects = {
     '100': u'创建虚机资源成功',
-    '200': u'申请虚机资源成功',
+    '200': u'申请虚机资源,请审批',
     '300': u'资源到期提醒'
 }
 
