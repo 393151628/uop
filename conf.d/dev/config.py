@@ -135,6 +135,7 @@ class DevelopmentConfig(BaseConfig):
     BASE_K8S_IMAGE = "reg1.syswin.com/base/uop-base-k8s:v-1.0.1"
     K8S_NGINX_PORT = "80"
     K8S_NGINX_IPS = ["172.28.13.5"]
+    ADMIN_EMAILS = ["wanggang3@syswin.com","sishuming@syswin.com"]
 configs = {
     'development': DevelopmentConfig,
 }

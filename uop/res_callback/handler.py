@@ -19,6 +19,7 @@ CMDB2_URL = configs[APP_ENV].CMDB2_URL
 CMDB2_USER = configs[APP_ENV].CMDB2_OPEN_USER
 CMDB2_VIEWS = configs[APP_ENV].CMDB2_VIEWS
 CMDB2_ENTITY = configs[APP_ENV].CMDB2_ENTITY
+ADMIN_EMAILS = configs[APP_ENV].ADMIN_EMAILS
 __all__ = [
     "transition_state_logger", "transit_request_data",
     "transit_repo_items", "do_transit_repo_items",
@@ -467,6 +468,7 @@ def format_put_data_cmdb(data, req_data):
 @async
 def send_email_res(resource_id, code):
     email_content = ''
+    email_list = []
     resource_obj = ResourceModel.objects.filter(res_id=resource_id,is_deleted=0)
     if resource_obj:
         user_name = resource_obj[0].user_name
@@ -477,6 +479,8 @@ def send_email_res(resource_id, code):
         if code == '200':
             user_name = resource_obj[0].user_name
             email_content = resource_obj[0].mail_content
+            email_list = ADMIN_EMAILS
+            cc_emails = cc_emails + user_emails
         elif code == '100':
             user_name = "UOP"
             business_name = resource_obj[0].business_name
@@ -484,6 +488,8 @@ def send_email_res(resource_id, code):
             resource_name = resource_obj[0].resource_name
             resource_type = resource_obj[0].resource_type
             os_ins_ip_list = resource_obj[0].os_ins_ip_list
+            email_list = user_emails
+            cc_emails = cc_emails + ADMIN_EMAILS
             content = """您好：\n\t%s资源：%s已经创建成功，业务：%s，模块：%s。""" % (resource_type, resource_name, business_name, module_name)
             for os_ins in os_ins_ip_list:
                 ip = getattr(os_ins, "ip")
@@ -492,7 +498,6 @@ def send_email_res(resource_id, code):
                 text = "\n\t ip：%s，用户名：%s，密码：%s。" % (ip, username, password)
                 content = content + text
             email_content = content
-        email_list = user_emails
         send = SendEmail(
             username=user_name,
             content=email_content,
