@@ -279,6 +279,36 @@ class NginxApi(Resource):
         return ret, code
 
 
+class OtherResourceType(Resource):
+
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('env', type=str, location="args")
+        parser.add_argument('cloud', type=str, location="args")
+        args = parser.parse_args()
+        env = args.env
+        cloud = args.cloud
+        data = {}
+        res_list = []
+        code = 200
+        try:
+            opsk_images = ConfOpenstackModel.objects.filter(cloud=cloud, env=env)
+            for opsk_image in opsk_images:
+                image_type = opsk_image.image_type
+                if image_type:
+                    res_list.append(image_type)
+            data["res_list"] = res_list
+            msg = "Get other resource type success"
+        except Exception as e:
+            code = 500
+            data = "Error"
+            msg = "Get other resource type error {e}".format(e=str(e))
+            Log.logger.error(msg)
+        ret = response_data(code, msg, data)
+        return ret, code
+
+
+
 
 
 
@@ -303,3 +333,4 @@ pool_api.add_resource(K8sNetworkApi, '/k8s/network')
 pool_api.add_resource(GetK8sNamespace, '/k8s/getnamespace')
 pool_api.add_resource(GetImageFlavor, '/getimgflavors')
 pool_api.add_resource(NginxApi, '/nginx')
+pool_api.add_resource(OtherResourceType, '/othrestype')
