@@ -295,7 +295,7 @@ class OtherResourceType(Resource):
             opsk_images = ConfOpenstackModel.objects.filter(cloud=cloud, env=env)
             for opsk_image in opsk_images:
                 image_type = opsk_image.image_type
-                if image_type:
+                if image_type and image_type not in ["mysql","redis","mongodb"]:
                     res_list.append(image_type)
             data["res_list"] = res_list
             msg = "Get other resource type success"
