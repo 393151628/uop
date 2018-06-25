@@ -10,7 +10,7 @@ from flask_restful import reqparse, Api, Resource
 from uop.auth import auth_blueprint
 from uop.models import UserInfo
 from uop.auth.errors import user_errors
-from uop.auth.handler import add_person,get_login_permission
+from uop.auth.handler import add_person,get_login_permission, registor_manual
 from uop.log import Log
 from uop.util import response_data
 from uop.permission.handler import api_permission_control
@@ -176,9 +176,10 @@ class UserLogin(Resource):
                     'operations': operations,
                 }
             else:
-                msg = u'登录失败'
-                code = 400
-                res = u'ldap验证错误'
+                registor_manual(id, user, department)
+                msg = u'登录成功'
+                code = 200
+                res = u'ldap验证错误,已注册独立uop账号'
 
         ret=response_data(code, msg, res)
         return ret,code

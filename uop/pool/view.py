@@ -96,14 +96,13 @@ class StatisticAPI(Resource):
                 Log.logger.info('[UOP] Get url: %s', url)
                 url_ = '%s%s'%(url.get('url'), 'api/az/uopStatistics')
                 Log.logger.info('[UOP] Get the whole url: %s', url_)
-
                 zone_items = ConfOpenstackModel.objects.filter(
                     env=url.get('env'), availability_zone__exists=True).values_list('cloud', 'availability_zone')
                 zone_dict = defaultdict(list)
                 for k, v in zone_dict:
                     zone_dict[k].append(v)
-                zone_dict['cloud1'] = zone_dict.pop('1')
-                zone_dict['cloud2'] = zone_dict.pop('2')
+                zone_dict['cloud1'] = zone_dict.pop('1', [])
+                zone_dict['cloud2'] = zone_dict.pop('2', [])
 
                 data_str = json.dumps({"env": url.get("env"), "info": zone_dict})
                 try:
