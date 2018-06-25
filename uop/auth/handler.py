@@ -164,3 +164,24 @@ def get_login_permission(role,menu_module=None):
     except Exception as e:
         Log.logger.error("UOP User get menu list error,error msg is %s" % str(e) )
         return  menu_list,buttons,icons,operations
+
+def registor_manual(user_id, username, department, 
+                    password='uop123456', role='user'):
+    import hashlib
+    from uop.models import UserInfo
+
+    md5 = hashlib.md5()
+    md5.update(password)
+    salt_password = md5.hexdigest()
+
+    user = UserInfo()
+    user.id = user_id
+    user.username = username
+    user.password = salt_password
+    user.department = department
+    user.created_time = datetime.datetime.now()
+    user.updated_time = datetime.datetime.now()
+    user.last_login_time = datetime.datetime.now()
+    user.role=role
+    user.save()
+
