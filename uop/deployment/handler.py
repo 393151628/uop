@@ -237,7 +237,7 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
                         data[type]['path_filename'] = path_filename
             elif cont.get('code') == 500:
                 return 'upload sql file failed', result
-        Log.logger.debug("{}  {}".format(url, json.dumps(headers)))
+        Log.logger.debug("{}  {}".format(crp_url, json.dumps(headers)))
         data_str = json.dumps(data)
         Log.logger.debug("Data args is " + str(data))
         Log.logger.debug("Data args is " + str(data_str))
