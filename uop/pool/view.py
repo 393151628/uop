@@ -99,7 +99,7 @@ class StatisticAPI(Resource):
                 zone_items = ConfOpenstackModel.objects.filter(
                     env=url.get('env'), availability_zone__exists=True).values_list('cloud', 'availability_zone')
                 zone_dict = defaultdict(list)
-                for k, v in zone_dict:
+                for k, v in zone_items:
                     zone_dict[k].append(v)
                 zone_dict['cloud1'] = zone_dict.pop('1', [])
                 zone_dict['cloud2'] = zone_dict.pop('2', [])
