@@ -724,7 +724,7 @@ class CapacityReservation(Resource):
                                 "host_mapping": db_com.host_mapping,
                                 "availability_zone":db_com.availability_zone,
                                 "image_id": db_com.image_id,
-                                "flavor_id": db_com.flavor_id,
+                                "flavor": db_com.flavor_id,
                                 "pom_path" : db_com.pom_path,
                                 "branch" : db_com.branch,
                                 "git_res_url": db_com.git_res_url,
