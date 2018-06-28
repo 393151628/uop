@@ -52,8 +52,8 @@ class DeploymentListAPI(Resource):
         domain_info = []
         if args.deploy_id:
             condition['deploy_id'] = args.deploy_id
-        if args.user_id:
-            condition['user_id'] = args.user_id if args.user_id != "admin" else ""
+        if args.user_id and args.user_id != "admin":
+            condition['user_id'] = args.user_id
         if args.initiator:
             condition['initiator'] = args.initiator
         if args.deploy_name:
@@ -74,8 +74,8 @@ class DeploymentListAPI(Resource):
             condition['created_time__lte'] = args.end_time
         if args.approve_status:
             condition['approve_status'] = args.approve_status
-        if args.department:
-            condition["department"]=args.department if args.department != "admin" else ""
+        if args.department and args.department != "admin":
+            condition["department"]=args.department
         if args.resource_type:
             condition["resource_type"]=args.resource_type
         if args.module_name:

@@ -182,8 +182,8 @@ def _match_condition_generator(args):
         match_cond = dict()
         match_dict = dict()
         match_list = []
-        if args.user_id:
-            match_cond['user_id'] = args.user_id if args.user_id != "admin" else ""
+        if args.user_id and args.user_id != "admin" :
+            match_cond['user_id'] = args.user_id
         if args.resource_name:
             match_cond['resource_name'] = args.resource_name
         if args.project:

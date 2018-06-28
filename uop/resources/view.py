@@ -302,8 +302,8 @@ class ResourceApplication(Resource):
             condition['env'] = args.env
         if args.instance_status:
             condition["approval_status__in"] = ["success", "failed", "revoke","config_revoke","config_processing"]
-        if args.department:
-            condition["department"]=args.department if args.department != "admin" else ""
+        if args.department and args.department != "admin":
+            condition["department"]=args.department
         if args.cloud:
             condition["cloud"] = args.cloud
         if args.resource_type:
