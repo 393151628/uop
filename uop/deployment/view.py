@@ -53,7 +53,7 @@ class DeploymentListAPI(Resource):
         if args.deploy_id:
             condition['deploy_id'] = args.deploy_id
         if args.user_id:
-            condition['user_id'] = args.user_id
+            condition['user_id'] = args.user_id if args.user_id != "admin" else ""
         if args.initiator:
             condition['initiator'] = args.initiator
         if args.deploy_name:
@@ -75,7 +75,7 @@ class DeploymentListAPI(Resource):
         if args.approve_status:
             condition['approve_status'] = args.approve_status
         if args.department:
-            condition["department"]=args.department
+            condition["department"]=args.department if args.department != "admin" else ""
         if args.resource_type:
             condition["resource_type"]=args.resource_type
         if args.module_name:
