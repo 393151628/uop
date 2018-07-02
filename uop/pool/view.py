@@ -106,7 +106,7 @@ class StatisticAPI(Resource):
 
                 data_str = json.dumps({"env": url.get("env"), "info": zone_dict})
                 try:
-                    result = requests.get(url_, headers=headers, data=data_str,timeout=5)
+                    result = requests.get(url_, headers=headers, data=data_str,timeout=10)
                     if result.json().get('code') == 200:
                         Log.logger.debug(url_ + ' '+json.dumps(headers))
                         cur_res = result.json().get('result').get('res')
