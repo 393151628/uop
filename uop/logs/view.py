@@ -54,6 +54,9 @@ class LogsListApi(Resource):
         condition["resource_type__in"] = ["app","kvm"]
         condition["approval_status__in"] = ["success", "failed", "revoke", "config_revoke", "config_processing"]
 
+        if condition.get("department") == "admin":
+            condition.pop("department")
+
         if start_time:
             condition['created_date__gte'] = start_time
         if end_time:
