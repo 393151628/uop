@@ -24,7 +24,7 @@ auth = HTTPBasicAuth()
 base_dn = 'dc=syswin,dc=com'
 scope = ldap.SCOPE_SUBTREE
 # TODO:move to global conf
-ldap_server = 'ldap://172.28.4.103:389'
+ldap_server = 'ldap://172.28.2.100:389'
 username = 'crm_test1'
 passwd_admin = 'syswin#'
 
