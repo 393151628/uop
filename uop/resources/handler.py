@@ -192,8 +192,9 @@ def _match_condition_generator(args):
             match_cond['application_status'] = args.formStatus
         if args.approval_status:
             match_cond['approval_status'] = args.approval_status
-        if args.department:
-            match_cond["department"]=args.department
+        if args.department and args.department != "admin":
+            departments = [dep.strip() for dep in args.department.strip().split(',')]
+            match_cond["department__in"] = departments
         if args.project_name:
             match_cond["project_name"] = args.project_name
         if args.module_name:

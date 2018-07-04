@@ -75,9 +75,10 @@ class DeploymentListAPI(Resource):
         if args.approve_status:
             condition['approve_status'] = args.approve_status
         if args.department and args.department != "admin":
-            condition["department"]=args.department
+            departments = [dep.strip() for dep in args.department.strip().split(',')]
+            condition["department__in"]=args.department
         if args.resource_type:
-            condition["resource_type"]=args.resource_type
+            condition["resource_type"] = departments
         if args.module_name:
             condition["module_name"]=args.module_name
         if args.resource_id:

@@ -303,7 +303,8 @@ class ResourceApplication(Resource):
         if args.instance_status:
             condition["approval_status__in"] = ["success", "failed", "revoke","config_revoke","config_processing"]
         if args.department and args.department != "admin":
-            condition["department"]=args.department
+            departments = [dep.strip() for dep in args.department.strip().split(',')]
+            condition["department__in"] = departments
         if args.cloud:
             condition["cloud"] = args.cloud
         if args.resource_type:
