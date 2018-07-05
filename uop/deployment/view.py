@@ -3,6 +3,7 @@
 import uuid
 import datetime
 from uop.log import Log
+import sys
 import copy
 from flask import request, send_from_directory, jsonify
 from flask_restful import reqparse, Api, Resource
@@ -17,6 +18,9 @@ from uop.log import Log
 from config import configs, APP_ENV
 from uop.permission.handler import api_permission_control
 
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 K8S_NGINX_PORT = configs[APP_ENV].K8S_NGINX_PORT
 K8S_NGINX_IPS = configs[APP_ENV].K8S_NGINX_IPS
