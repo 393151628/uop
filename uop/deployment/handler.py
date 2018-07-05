@@ -431,8 +431,8 @@ def check_domain_port(resource,app_image):
                     app["o_port"] = compute.port
                     if deps.__len__() == 0 and compute.domain:
                         app["is_nginx"] = 1
-                    if compute.domain != app.get("domain") or compute.domain_path != app.get("domain_path"):
-                        if compute.domain or compute.domain_path:
+                    if compute.domain != app.get("domain") or compute.domain_path != app.get("domain_path") or compute.port != app.get("port,"):
+                        if compute.domain or compute.domain_path or compute.port:
                             app["ingress_flag"] = "update"
                             app["is_nginx"] = 1
                         elif not compute.domain and app.get("domain"):
