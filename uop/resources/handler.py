@@ -308,7 +308,7 @@ def get_from_uop(args):
     try:
         attach_key = lambda v, query, key, filter: query.update({key: v}) if filter else ""
         departments = [dep.strip() for dep in department.strip().split(',')]
-        attach_key(departments, query, "department__in", "admin" not in departments)
+        attach_key(departments, query, "department__in", department != "admin")
         attach_key(user_id, query, "user_id", user_id and user_id != "admin")
         attach_key(env, query, "env", env)
         attach_key(resource_name.decode(encoding="utf-8") if resource_name else "", query, "resource_name__icontains", resource_name)
