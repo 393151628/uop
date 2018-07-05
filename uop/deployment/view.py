@@ -79,6 +79,7 @@ class DeploymentListAPI(Resource):
         if args.approve_status:
             condition['approve_status'] = args.approve_status
         if args.department and args.department != "admin":
+            Log.logger.info("11111111111111111111111111111111111111111111111111111111111111111111111111111111")
             departments = [dep.strip() for dep in args.department.decode("unicode_escape").strip().split(',')]
             condition["department__in"]=args.department
         if args.resource_type:
@@ -99,6 +100,7 @@ class DeploymentListAPI(Resource):
                     args.page_size)
             else:
                 Deployments = Deployment.objects.filter(**condition).order_by('-created_time')
+            Log.logger.info("222222222222222222222222222222222222222222222222222222222222222222")
             for deployment in Deployments:
                 # 返回disconf的json
                 disconf = []
