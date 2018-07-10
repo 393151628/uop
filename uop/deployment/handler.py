@@ -15,7 +15,7 @@ __all__ = [
     "upload_files_to_crp","upload_disconf_files_to_crp",
     "disconf_write_to_file", "attach_domain_ip"
 ]
-UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
+UPLOAD_FOLDER = configs[APP_ENV].UPLOAD_FOLDER
 K8S_NGINX_PORT = configs[APP_ENV].K8S_NGINX_PORT
 K8S_NGINX_IPS = configs[APP_ENV].K8S_NGINX_IPS
 
