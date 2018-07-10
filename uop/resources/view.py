@@ -40,8 +40,7 @@ class ResourceApplication(Resource):
         parser.add_argument('resource_info_list', type=list, location='json')
         args = parser.parse_args()
         resource_info_list = args.resource_info_list
-        res_info_list=[]
-        res,code = resource_post(resource_info_list,res_info_list)
+        res,code = resource_post(resource_info_list)
         return res, code
 
     # @api_permission_control(request)

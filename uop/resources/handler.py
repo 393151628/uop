@@ -799,8 +799,9 @@ def delete_resource_deploy(res_id):
     return ret, 200
 
 
-def resource_post(resource_info_list,res_info_list):
+def resource_post(resource_info_list):
     try:
+        res_info_list = []
         res_exist_list = []
         for info in resource_info_list:
             res_exist_dict = {}
