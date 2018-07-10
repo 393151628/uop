@@ -60,8 +60,8 @@ class BaseConfig:
     DEBUG = False
 
 class ProdConfig(BaseConfig):
-    # TESTING = True
-    # DEBUG = True
+    TESTING = True
+    DEBUG = True
 
     # Connect to mongo cluster. mongo_url is valid.
     MONGODB_SETTINGS = {
