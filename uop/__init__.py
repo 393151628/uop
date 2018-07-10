@@ -20,6 +20,7 @@ from uop.configure import configure_blueprint
 from uop.pool import pool_blueprint
 from uop.permission import perm_blueprint
 from uop.logs import logs_blueprint
+from uop.open_api import open_blueprint
 from uop.util import get_entity_cache
 
 
@@ -125,7 +126,7 @@ def create_app(config_name):
     app.register_blueprint(pool_blueprint, url_prefix='/api/pool')
     app.register_blueprint(perm_blueprint, url_prefix='/api/permission')
     app.register_blueprint(logs_blueprint, url_prefix='/api/logs')
-    app.register_blueprint(logs_blueprint, url_prefix='/api/openapi')
+    app.register_blueprint(open_blueprint, url_prefix='/api/openapi')
 
     return app
 
