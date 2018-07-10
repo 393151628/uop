@@ -125,6 +125,7 @@ def create_app(config_name):
     app.register_blueprint(pool_blueprint, url_prefix='/api/pool')
     app.register_blueprint(perm_blueprint, url_prefix='/api/permission')
     app.register_blueprint(logs_blueprint, url_prefix='/api/logs')
+    app.register_blueprint(logs_blueprint, url_prefix='/api/openapi')
 
     return app
 

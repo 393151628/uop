@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import requests
 from flask import current_app
-from uop.models import  ResourceModel, ComputeIns,Deployment,ConfigureNginxModel
+from uop.models import  ResourceModel, ComputeIns,Deployment,ConfigureNginxModel,DisconfIns
 from uop.disconf.disconf_api import *
 from uop.util import get_CRP_url
 from uop.log import Log
-
+import uuid
+import datetime
+from config import configs, APP_ENV
 
 __all__ = [
     "format_resource_info","get_resource_by_id_mult",
@@ -13,7 +15,9 @@ __all__ = [
     "upload_files_to_crp","upload_disconf_files_to_crp",
     "disconf_write_to_file", "attach_domain_ip"
 ]
-
+UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
+K8S_NGINX_PORT = configs[APP_ENV].K8S_NGINX_PORT
+K8S_NGINX_IPS = configs[APP_ENV].K8S_NGINX_IPS
 
 def format_resource_info(items):
     resource_info = {}
@@ -484,4 +488,196 @@ def get_k8s_nginx(env):
         err_msg = "Uop get nginx info error {e}".format(e=str(e))
         Log.logger.error(err_msg)
     return nginx_info
+
+
+def write_file(uid, context, type):
+    path = os.path.join(UPLOAD_FOLDER, type, 'script_' + uid)
+    with open(path, 'wb') as f:
+        f.write(context)
+    return path
+
+
+def admin_approve_allow(args):
+    dep_id = args.dep_id
+    # 管理员审批通过后修改resource表deploy_name,更新当前版本
+    resource = ResourceModel.objects.get(res_id=args.resource_id)
+    cloud = resource.cloud
+    project_name = resource.project_name
+    resource_type = resource.resource_type
+    resource.deploy_name = args.deploy_name
+    resource.updated_date = datetime.datetime.now()
+    resource.save()
+    # disconf配置
+    # 1、将disconf信息更新到数据库
+    deploy_obj = Deployment.objects.get(deploy_id=dep_id)
+    for instance_info in args.disconf:
+        for disconf_info_front in instance_info.get('dislist'):
+            disconf_id = disconf_info_front.get('disconf_id')
+            for disconf_info in deploy_obj.disconf_list:
+                if disconf_info.disconf_id == disconf_id:
+                    disconf_info.disconf_admin_content = disconf_info_front.get('disconf_admin_content')
+                    disconf_info.disconf_server_name = disconf_info_front.get('disconf_server_name')
+                    disconf_info.disconf_server_url = disconf_info_front.get('disconf_server_url')
+                    disconf_info.disconf_server_user = disconf_info_front.get('disconf_server_user')
+                    disconf_info.disconf_server_password = disconf_info_front.get('disconf_server_password')
+                    disconf_info.disconf_env = disconf_info_front.get('disconf_env')
+                    disconf_info.disconf_app_name = disconf_info_front.get('disconf_app_name')
+    # deploy_obj.save()
+
+    # 将computer信息如IP，更新到数据库
+    app_image = [dict(app, cloud=cloud, resource_type=resource_type, project_name=project_name) for app in
+                 args.app_image]
+    appinfo = []
+    if args.action == "admin_approve_allow":
+        cmdb_url = current_app.config['CMDB_URL']
+        appinfo = attach_domain_ip(app_image, resource, cmdb_url)
+    # 如果是k8s应用修改外层nginx信息
+    if cloud == '2' and resource_type == "app":
+        nginx_info = get_k8s_nginx(args.environment)
+        ips = nginx_info.get("nginx_ips") if nginx_info.get("nginx_ips") else K8S_NGINX_IPS
+        nginx_port = nginx_info.get("nginx_port") if nginx_info.get("nginx_port") else K8S_NGINX_PORT
+        appinfo = [dict(app, nginx_port=nginx_port, ips=ips) for app in appinfo]
+    # 2、把配置推送到disconf
+    disconf_server_info = deal_disconf_info(deploy_obj)
+    app_image = appinfo if appinfo else app_image
+    deploy_obj.app_image = str(app_image)
+    deploy_obj.approve_status = 'success'
+    message = 'approve_allow success'
+    ##推送到crp
+    deploy_type = "deploy"
+    err_msg, result = deploy_to_crp(deploy_obj, args.environment,
+                                    args.database_password, appinfo, disconf_server_info, deploy_type)
+    if err_msg:
+        deploy_obj.deploy_result = 'deploy_fail'
+        message = 'deploy_fail'
+    # 修改deploy_result状态为部署中
+    deploy_obj.deploy_result = 'deploying'
+    deploy_obj.approve_suggestion = args.approve_suggestion
+    deploy_obj.save()
+    return message
+
+
+def admin_approve_forbid(args):
+    deploy_obj = Deployment.objects.get(deploy_id=args.dep_id)
+    deploy_obj.approve_status = 'fail'
+    deploy_obj.deploy_result = 'not_deployed'
+    deploy_obj.approve_suggestion = args.approve_suggestion
+    deploy_obj.save()
+    message = 'approve_forbid success'
+    return message
+
+
+def save_to_db(args):
+    resource = ResourceModel.objects.get(res_id=args.resource_id)
+    mysql_context = args.mysql_context
+    redis_context = args.redis_context
+    mongodb_context = args.mongodb_context
+    uid = args.uid
+    app_image = args.app_image
+    for app in app_image:
+        app["is_nginx"] = 0
+    # 判断域名是否变化
+    app_image = check_domain_port(resource, app_image)
+    # ---
+    if args.mysql_exe_mode == 'tag' and args.mysql_context:
+        mysql_context = write_file(uid, args.mysql_context, 'mysql')
+    if args.redis_exe_mode == 'tag' and args.redis_context:
+        redis_context = write_file(uid, args.redis_context, 'redis')
+    if args.mongodb_exe_mode == 'tag' and args.mongodb_context:
+        mongodb_context = write_file(uid, args.mongodb_context, 'mongodb')
+    # ------将部署信息更新到deployment表
+    deploy_result = 'deploy_to_approve'
+    deploy_type = 'deploy'
+    deploy_item = Deployment(
+        deploy_id=uid,
+        deploy_name=args.deploy_name,
+        initiator=args.initiator,
+        user_id=args.user_id,
+        project_id=args.project_id,
+        project_name=args.project_name,
+        resource_id=args.resource_id,
+        resource_name=args.resource_name,
+        created_time=datetime.datetime.now(),
+        environment=args.environment,
+        release_notes=args.release_notes,
+        mysql_tag=args.mysql_exe_mode,
+        mysql_context=mysql_context,
+        redis_tag=args.redis_exe_mode,
+        redis_context=redis_context,
+        mongodb_tag=args.mongodb_exe_mode,
+        mongodb_context=mongodb_context,
+        app_image=str(app_image),
+        deploy_result=deploy_result,
+        apply_status=args.apply_status,
+        approve_status=args.approve_status,
+        approve_suggestion=args.approve_suggestion,
+        database_password=args.database_password,
+        deploy_type=deploy_type,
+        department=args.department,
+        business_name=args.business_name,
+        module_name=args.module_name,
+        resource_type=args.resource_type
+    )
+
+    for instance_info in args.disconf:
+        for disconf_info in instance_info.get('dislist'):
+            # 以内容形式上传，需要将内容转化为文本
+            if disconf_info.get('disconf_tag') == 'tag':
+                file_name = disconf_info.get('disconf_name')
+                file_content = disconf_info.get('disconf_content')
+                ins_name = instance_info.get('ins_name')
+                upload_file = disconf_write_to_file(file_name=file_name,
+                                                    file_content=file_content,
+                                                    instance_name=ins_name,
+                                                    type='disconf')
+                disconf_info['disconf_content'] = upload_file
+                disconf_info['disconf_admin_content'] = ''
+            # 以文本形式上传，只需获取文件名
+            else:
+                file_name = disconf_info.get('disconf_name')
+                if len(file_name.strip()) == 0:
+                    upload_file = ''
+                    disconf_info['disconf_content'] = upload_file
+                    disconf_info['disconf_admin_content'] = upload_file
+
+            ins_name = instance_info.get('ins_name')
+            ins_id = instance_info.get('ins_id')
+            disconf_tag = disconf_info.get('disconf_tag')
+            disconf_name = disconf_info.get('disconf_name')
+            disconf_content = disconf_info.get('disconf_content')
+            disconf_admin_content = disconf_info.get('disconf_admin_content')
+            disconf_server_name = disconf_info.get('disconf_server_name')
+            disconf_server_url = disconf_info.get('disconf_server_url')
+            disconf_server_user = disconf_info.get('disconf_server_user')
+            disconf_server_password = disconf_info.get('disconf_server_password')
+            disconf_version = disconf_info.get('disconf_version')
+            disconf_env = disconf_info.get('disconf_env')
+            disconf_app_name = disconf_info.get('disconf_app_name')
+            disconf_id = str(uuid.uuid1())
+            disconf_ins = DisconfIns(ins_name=ins_name, ins_id=ins_id,
+                                     disconf_tag=disconf_tag,
+                                     disconf_name=disconf_name,
+                                     disconf_content=disconf_content,
+                                     disconf_admin_content=disconf_admin_content,
+                                     disconf_server_name=disconf_server_name,
+                                     disconf_server_url=disconf_server_url,
+                                     disconf_server_user=disconf_server_user,
+                                     disconf_server_password=disconf_server_password,
+                                     disconf_version=disconf_version,
+                                     disconf_env=disconf_env,
+                                     disconf_id=disconf_id,
+                                     disconf_app_name=disconf_app_name,
+                                     )
+            deploy_item.disconf_list.append(disconf_ins)
+
+    deploy_item.save()
+    message = 'save_to_db success'
+    return message
+
+
+def not_need_approve(args):
+    message = save_to_db(args)
+    if message == 'save_to_db success':
+        setattr(args, 'dep_id', args.uid)
+        return admin_approve_allow(args)
 
