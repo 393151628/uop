@@ -11,6 +11,8 @@ import threading
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from uop.models import db, NetWorkConfig, EntityCache
+from config import configs, APP_ENV
+
 curdir = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -71,9 +73,9 @@ def async(fun):
 
 def get_CRP_url(env=None):
     if env:
-        CPR_URL = current_app.config['CRP_URL'][env]
+        CPR_URL = configs[APP_ENV].CRP_URL[env]
     else:
-        CPR_URL = current_app.config['CRP_URL']['dev']
+        CPR_URL = configs[APP_ENV].CRP_URL['dev']
     return CPR_URL
 
 def get_network_used(env, sub_network, vlan_id):
