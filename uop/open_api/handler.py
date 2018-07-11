@@ -104,6 +104,7 @@ def res_deploy(args):
     msg = ""
     try:
         #将信息存放到resource 表
+        Log.logger.info("333333333333333333333334444444444444444444444444444444444")
         deploys = Deployment.objects.filter(resource_name=args.resource_name)
         if deploys:
             #直接部署
