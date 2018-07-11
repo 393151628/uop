@@ -112,7 +112,7 @@ def res_deploy(args):
                 if resource.reservation_status == "set_success":
                     deployment_post(args)
                     break
-                elif resource.reservation_status == "set_success":break
+                elif resource.reservation_status == "set_fail":break
     except Exception as e:
         pass
     return code
