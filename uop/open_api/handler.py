@@ -25,7 +25,7 @@ def approval_post(args):
             setattr(args, 'resource_id', res_id)
             reservation_post(args)
     except Exception as e:
-        pass
+        raise Exception(e)
     return code
 
 def resource_db_post(args):
@@ -69,7 +69,7 @@ def resource_db_post(args):
             approval_info_dict["user_id"] = args.user_id
             approval_list_post(approval_info_list)
     except Exception as e:
-        pass
+        raise Exception(e)
     return code
 
 
@@ -90,7 +90,7 @@ def deployment_post(args):
             setattr(args, 'dep_id', uid)
             admin_approve_allow(args)
     except Exception as e:
-        pass
+        raise Exception(e)
     return code
 
 
@@ -115,6 +115,7 @@ def res_deploy(args):
                     break
                 elif resource.reservation_status == "set_fail":break
     except Exception as e:
+        raise Exception(e)
         code = 500
         msg = "res and deploy error:{e}".format(e=str(e))
     return msg,code
