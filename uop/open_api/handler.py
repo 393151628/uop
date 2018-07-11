@@ -67,6 +67,7 @@ def resource_db_post(args):
             approval_info_dict["project_id"] = args.cmdb2_project_id
             approval_info_dict["department"] = args.department
             approval_info_dict["user_id"] = args.user_id
+            approval_info_list.append(approval_info_dict)
             ret,code = approval_list_post(approval_info_list)
             Log.logger.info("2222222222222222222222222222223333333333333333333333322222222 {}".format(ret))
         else:
