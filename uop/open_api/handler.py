@@ -85,9 +85,7 @@ def deployment_post(args):
         setattr(args, 'uid', uid)
         message = save_to_db(args)
         if message == 'save_to_db success':
-            deploys = Deployment.objects.filter(resource_name=args.resource_name).order_by("-created_time")
-            dep_id = deploys[0].deploy_id
-            setattr(args, 'dep_id', dep_id)
+            setattr(args, 'dep_id', uid)
             admin_approve_allow(args)
     except Exception as e:
         pass
