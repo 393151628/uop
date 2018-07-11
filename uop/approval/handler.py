@@ -319,8 +319,10 @@ def reservation_post(args):
         data_str = json.dumps(data)
     try:
         Log.logger.info("Data args is %s", data)
-        CPR_URL = get_CRP_url(data['env'])
-        crp_url = args.crp_url if args.crp_url else CPR_URL
+        if args.crp_url:
+            crp_url = args.crp_url
+        else:
+            crp_url = get_CRP_url(data['env'])
         if os_ins_ip_list:
             msg = requests.put(
                 crp_url + "api/resource/sets",
