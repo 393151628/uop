@@ -547,7 +547,7 @@ def admin_approve_allow(args):
     ##推送到crp
     deploy_type = "deploy"
     err_msg, result = deploy_to_crp(deploy_obj, args.environment,
-                                    args.database_password, appinfo, disconf_server_info, deploy_type,args.crp_url)
+                                    args.database_password, appinfo, disconf_server_info, deploy_type,crp_url=args.crp_url)
     if err_msg:
         deploy_obj.deploy_result = 'deploy_fail'
         message = 'deploy_fail'
