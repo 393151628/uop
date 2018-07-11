@@ -236,7 +236,7 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
         if deploy_item.mongodb_context:
             file_paths.append(('mongodb', deploy_item.mongodb_context))
         if file_paths:
-            res = upload_files_to_crp(file_paths, res_obj['env'])
+            res = upload_files_to_crp(file_paths,_crp_url)
             cont = json.loads(res.content)
             if cont.get('code') == 200:
                 for type, path_filename in cont['file_info'].items():
@@ -259,9 +259,8 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
     return err_msg, result
 
 
-def upload_files_to_crp(file_paths, env):
-    CPR_URL = get_CRP_url(env)
-    url = CPR_URL + "api/deploy/upload"
+def upload_files_to_crp(file_paths,crp_url):
+    url = crp_url + "api/deploy/upload"
     files = []
     for db_type, path in file_paths:
         files.append((db_type, open(path, 'rb')))
