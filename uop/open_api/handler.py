@@ -46,8 +46,6 @@ def resource_db_post(args):
         resource_info_dict["business_name"] = args.business_name
         resource_info_dict["cmdb2_project_id"] = args.cmdb2_project_id
         resource_info_dict["cmdb2_module_id"] = args.cmdb2_module_id
-        resource_info_dict["project"] = args.project
-        resource_info_dict["project_id"] = args.project_id
         resource_info_dict["department"] = args.department
         resource_info_dict["user_name"] = args.user_name
         resource_info_dict["user_id"] = args.user_id
