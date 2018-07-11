@@ -206,10 +206,10 @@ def approval_info_post(args,res_id):
     res = ""
     msg = {}
     try:
-        docker_network_id = args.docker_network_id
-        mysql_network_id = args.mysql_network_id
-        redis_network_id = args.redis_network_id
-        mongodb_network_id = args.mongodb_network_id
+        docker_network_id = args.docker_network_id if args.docker_network_id else ""
+        mysql_network_id = args.mysql_network_id if args.mysql_network_id else ""
+        redis_network_id = args.redis_network_id if args.redis_network_id else ""
+        mongodb_network_id = args.mongodb_network_id if args.mongodb_network_id else ""
         networkName = args.networkName
         tenantName = args.tenantName
         lb_methods = args.lb_methods
