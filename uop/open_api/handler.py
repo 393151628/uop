@@ -81,7 +81,7 @@ def resource_db_post(args):
 def deployment_post(args):
     code = 200
     try:
-        Log.logger.info("666666666666666666666666666666666666666666666666666")
+        Log.logger.info("666666666666666666666666666666666666666666666666666 {}".format(args))
         resource = ResourceModel.objects.get(resource_name=args.resource_name)
         project_id = resource.cmdb2_project_id
         environment = resource.env
