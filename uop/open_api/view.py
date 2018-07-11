@@ -11,6 +11,7 @@ from uop.util import response_data
 class ResourceOpenApi(Resource):
 
     def post(self):
+        code = 200
         parser = reqparse.RequestParser()
         parser.add_argument('resource_name', type=str)
         parser.add_argument('project_name', type=str)
@@ -57,8 +58,9 @@ class ResourceOpenApi(Resource):
         parser.add_argument('certificate', type=str, location='json', default="")
         parser.add_argument('named_url', type=str, location='json', default="")
         args = parser.parse_args()
-        msg,code = res_deploy(args)
-        data="success" if code == 200 else "failed"
+        res_deploy(args)
+        data = "success"
+        msg = "success"
         ret,code = response_data(code,msg,data)
         return ret,code
 
