@@ -93,9 +93,9 @@ def deployment_post(args):
         setattr(args, 'environment', environment)
         setattr(args, 'app_image', app_image)
         setattr(args, 'uid', uid)
-        resource_id = getattr(args, 'resource_id')
-        if not resource_id:
-            setattr(args, 'resource_id', res_id)
+        # resource_id = getattr(args, 'resource_id')
+        # if not resource_id:
+        setattr(args, 'resource_id', res_id)
         message = save_to_db(args)
         Log.logger.info("88888888888888888888888888888 {}".format(message))
         if message == 'save_to_db success':
