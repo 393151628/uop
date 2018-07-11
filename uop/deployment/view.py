@@ -258,6 +258,7 @@ class DeploymentListAPI(Resource):
         parser.add_argument('resource_type', type=str, location='json')
         parser.add_argument('module_name', type=str, location='json')
         parser.add_argument('business_name', type=str, location='json')
+        parser.add_argument('crp_url', type=str, location='json')
 
         args = parser.parse_args()
         action = args.action
