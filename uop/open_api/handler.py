@@ -6,6 +6,7 @@ from uop.deployment.handler import admin_approve_allow,save_to_db
 from uop.resources.handler import resource_post
 from uop.approval.handler import approval_info_post,approval_list_post,reservation_post
 from uop.models import Deployment,ResourceModel
+from uop.util import async
 
 
 def approval_post(args):
@@ -92,9 +93,10 @@ def deployment_post(args):
     return code
 
 
-
+@async
 def res_deploy(args):
     code = 200
+    msg = ""
     try:
         #将信息存放到resource 表
         deploys = Deployment.objects.filter(resource_name=args.resource_name)
@@ -112,8 +114,9 @@ def res_deploy(args):
                     break
                 elif resource.reservation_status == "set_fail":break
     except Exception as e:
-        pass
-    return code
+        code = 500
+        msg = "res and deploy error:{e}".format(e=str(e))
+    return msg,code
 
 
 
