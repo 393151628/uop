@@ -7,7 +7,7 @@ from uop.resources.handler import resource_post
 from uop.approval.handler import approval_info_post,approval_list_post,reservation_post
 from uop.models import Deployment,ResourceModel
 from uop.util import async
-
+from uop.log import Log
 
 def approval_post(args):
     """
@@ -24,6 +24,8 @@ def approval_post(args):
         if code == 200:
             setattr(args, 'resource_id', res_id)
             reservation_post(args)
+        else:
+            Log.logger.info("111111111111111111111111111111111 {}".format(ret))
     except Exception as e:
         raise Exception(e)
     return code
@@ -57,7 +59,7 @@ def resource_db_post(args):
         resource_info_dict["cloud"] = args.cloud
         resource_info_dict["domain"] = args.domain
         resource_info_list.append(resource_info_dict)
-        res, code = resource_post(resource_info_list)
+        ret, code = resource_post(resource_info_list)
         if code == 200:
             approval_info_list = []
             approval_info_dict = {}
@@ -68,6 +70,8 @@ def resource_db_post(args):
             approval_info_dict["department"] = args.department
             approval_info_dict["user_id"] = args.user_id
             approval_list_post(approval_info_list)
+        else:
+            Log.logger.info("22222222222222222222222222222222222222 {}".format(ret))
     except Exception as e:
         raise Exception(e)
     return code
