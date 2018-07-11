@@ -61,7 +61,7 @@ class ResourceOpenApi(Resource):
         res_deploy(args)
         data = "success"
         msg = "success"
-        ret,code = response_data(code,msg,data)
+        ret = response_data(code,msg,data)
         return ret,code
 
 
