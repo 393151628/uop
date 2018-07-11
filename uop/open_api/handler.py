@@ -81,10 +81,12 @@ def resource_db_post(args):
 def deployment_post(args):
     code = 200
     try:
+        Log.logger.info("666666666666666666666666666666666666666666666666666")
         resource = ResourceModel.objects.get(resource_name=args.resource_name)
         project_id = resource.cmdb2_project_id
         environment = resource.env
         app_image = [resource.compute_list[0].to_json()]
+        Log.logger.info("77777777777777777777777777777777777777777777777777777777 {}".format(app_image))
         uid = str(uuid.uuid1())
         setattr(args, 'project_id', project_id)
         setattr(args, 'environment', environment)
@@ -113,10 +115,12 @@ def res_deploy(args):
             deployment_post(args)
         else:
             #先创建资源再部署
-            resource_db_post(args)
-            Log.logger.info("33333333333333333333333333333333333333333")
-            approval_post(args)
-            Log.logger.info("444444444444444444444444444444444444444444444")
+            resources = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,reservation_status="set_success")
+            if not resources:
+                resource_db_post(args)
+                Log.logger.info("33333333333333333333333333333333333333333")
+                approval_post(args)
+                Log.logger.info("444444444444444444444444444444444444444444444")
             while 1:
                 resource = ResourceModel.objects.get(resource_name=args.resource_name)
                 if resource.reservation_status == "set_success":
