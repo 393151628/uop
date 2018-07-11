@@ -227,7 +227,7 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
             'Content-Type': 'application/json',
         }
         # 上传disconf配置文件
-        upload_disconf_files_to_crp(disconf_info_list=disconf_server_info, env=res_obj['env'])
+        upload_disconf_files_to_crp(disconf_info_list=disconf_server_info,crp_url=_crp_url)
         file_paths = []
         if deploy_item.mysql_context:
             file_paths.append(('mysql', deploy_item.mysql_context))
@@ -273,15 +273,14 @@ def upload_files_to_crp(file_paths,crp_url):
         return {'code': -1}
 
 
-def upload_disconf_files_to_crp(disconf_info_list, env):
+def upload_disconf_files_to_crp(disconf_info_list, crp_url):
     """
     上传disconf文件到crp
     :param disconf_info:
     :param env:
     :return:
     """
-    CPR_URL = get_CRP_url(env)
-    url = CPR_URL + "api/deploy/upload"
+    url = crp_url + "api/deploy/upload"
     try:
         res = []
         for disconf_info in disconf_info_list:
