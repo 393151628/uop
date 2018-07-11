@@ -211,7 +211,7 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
     data['docker'] = docker_list
     #获取数据库信息
     database_info = get_database_info(res_obj,database_password)
-    Log.logger.debug("#####uop database info {}".format(database_info))
+    Log.logger.debug("#####uop database info {} ----{}".format(database_info,crp_url))
     if database_info:
         db_type = database_info["database"]
         data[db_type] = database_info
