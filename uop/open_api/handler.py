@@ -93,11 +93,13 @@ def deployment_post(args):
         setattr(args, 'app_image', app_image)
         setattr(args, 'uid', uid)
         message = save_to_db(args)
+        Log.logger.info("88888888888888888888888888888 {}".format(message))
         if message == 'save_to_db success':
             setattr(args, 'dep_id', uid)
             admin_approve_allow(args)
+            Log.logger.info("999999999999999999999999999999")
     except Exception as e:
-        raise Exception(e)
+        raise Exception("deployment_post {}".format(e))
     return code
 
 
