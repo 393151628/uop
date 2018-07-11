@@ -19,6 +19,7 @@ def approval_post(args):
     try:
         resource = ResourceModel.objects.get(resource_name=args.resource_name)
         res_id = resource.res_id
+        setattr(args, 'approve_uid', args.user_id)
         ret, code = approval_info_post(args, res_id)
         if code == 200:
             setattr(args, 'resource_id', res_id)

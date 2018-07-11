@@ -35,7 +35,6 @@ class ResourceOpenApi(Resource):
         parser.add_argument('host_mapping', type=list, location='json')
         parser.add_argument('network_id', type=str)
         parser.add_argument('scheduler_zone', type=str)
-        parser.add_argument('approve_uid', type=str)
         parser.add_argument('agree', type=bool, default=True)
         parser.add_argument('annotations', type=str,default="")
 
@@ -52,7 +51,6 @@ class ResourceOpenApi(Resource):
         parser.add_argument('approve_suggestion', type=str, location='json',default="")
         parser.add_argument('apply_status', type=str, location='json',default="success")
         parser.add_argument('approve_status', type=str, location='json',default="success")
-        parser.add_argument('dep_id', type=str, location='json',default="")
         parser.add_argument('disconf', type=list, location='json',default=[])
         parser.add_argument('database_password', type=str, location='json',default="")
         parser.add_argument('domain_ip', type=str, location='json', default="")
@@ -60,7 +58,8 @@ class ResourceOpenApi(Resource):
         parser.add_argument('named_url', type=str, location='json', default="")
         args = parser.parse_args()
         msg,code = res_deploy(args)
-        ret,code = response_data(code,msg,data="success")
+        data="success" if code == 200 else "failed"
+        ret,code = response_data(code,msg,data)
         return ret,code
 
 
