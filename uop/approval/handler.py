@@ -206,8 +206,6 @@ def approval_info_post(args,res_id):
     res = ""
     msg = {}
     try:
-        networkName = args.networkName
-        tenantName = args.tenantName
         lb_methods = args.lb_methods
         namespace = args.namespace
         host_mapping = args.host_mapping
@@ -241,8 +239,6 @@ def approval_info_post(args,res_id):
             if compute_list:
                 for com in compute_list:
                     com.network_id = network_id
-                    com.networkName = networkName
-                    com.tenantName = tenantName
                     com.lb_methods = lb_methods
                     com.namespace = namespace
                     com.host_mapping = host_mapping
