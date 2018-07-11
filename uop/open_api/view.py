@@ -101,4 +101,4 @@ class ResourceOpenApi(Resource):
 
 
 
-resources_api.add_resource(ResourceOpenApi, '/')
+resources_api.add_resource(ResourceOpenApi, '/resource')
