@@ -111,7 +111,9 @@ def res_deploy(args):
         else:
             #先创建资源再部署
             resource_db_post(args)
+            Log.logger.info("33333333333333333333333333333333333333333")
             approval_post(args)
+            Log.logger.info("444444444444444444444444444444444444444444444")
             while 1:
                 resource = ResourceModel.objects.get(resource_name=args.resource_name)
                 if resource.reservation_status == "set_success":
