@@ -206,10 +206,6 @@ def approval_info_post(args,res_id):
     res = ""
     msg = {}
     try:
-        docker_network_id = args.docker_network_id if args.docker_network_id else ""
-        mysql_network_id = args.mysql_network_id if args.mysql_network_id else ""
-        redis_network_id = args.redis_network_id if args.redis_network_id else ""
-        mongodb_network_id = args.mongodb_network_id if args.mongodb_network_id else ""
         networkName = args.networkName
         tenantName = args.tenantName
         lb_methods = args.lb_methods
@@ -219,13 +215,6 @@ def approval_info_post(args,res_id):
         scheduler_zone = args.scheduler_zone
         if host_mapping is not None:
             host_mapping = json.dumps(host_mapping)
-        network_id_dict = {
-            "docker": docker_network_id,
-            "mysql": mysql_network_id,
-            "redis": redis_network_id,
-            "mongodb": mongodb_network_id
-        }
-
         approvals = models.Approval.objects.filter(
             capacity_status="res", resource_id=res_id).order_by("-create_date")
         resource = models.ResourceModel.objects.get(res_id=res_id)
@@ -249,18 +238,9 @@ def approval_info_post(args,res_id):
                 else:
                     resource.reservation_status = "approval_fail"
             approval.save()
-            if docker_network_id:
-                resource.docker_network_id = docker_network_id.strip()
-            if mysql_network_id:
-                resource.mysql_network_id = mysql_network_id.strip()
-            if redis_network_id:
-                resource.redis_network_id = redis_network_id.strip()
-            if mongodb_network_id:
-                resource.mongodb_network_id = mongodb_network_id.strip()
-
             if compute_list:
                 for com in compute_list:
-                    com.network_id = docker_network_id
+                    com.network_id = network_id
                     com.networkName = networkName
                     com.tenantName = tenantName
                     com.lb_methods = lb_methods
@@ -271,9 +251,6 @@ def approval_info_post(args,res_id):
                 for res_obj in resource_list:
                     if network_id:
                         res_obj.network_id = network_id
-                    else:
-                        res_obj.network_id = network_id_dict.get(
-                            res_obj.ins_type)
             resource.save()
             code = 200
         else:
