@@ -6,7 +6,7 @@ from flask_restful import reqparse, Api, Resource
 from uop.open_api.handler import res_deploy
 
 resources_api = Api(open_blueprint)
-from uop.util import response_data
+from uop.util import response_data,get_CRP_url
 
 class ResourceOpenApi(Resource):
 
@@ -58,6 +58,8 @@ class ResourceOpenApi(Resource):
         parser.add_argument('certificate', type=str, location='json', default="")
         parser.add_argument('named_url', type=str, location='json', default="")
         args = parser.parse_args()
+        crp_url = get_CRP_url(args.env)
+        setattr(args, 'crp_url', crp_url)
         res_deploy(args)
         data = "success"
         msg = "success"

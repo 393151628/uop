@@ -73,9 +73,9 @@ def async(fun):
 
 def get_CRP_url(env=None):
     if env:
-        CPR_URL = configs[APP_ENV].CRP_URL[env]
+        CPR_URL = current_app.config['CRP_URL'][env]
     else:
-        CPR_URL = configs[APP_ENV].CRP_URL['dev']
+        CPR_URL = current_app.config['CRP_URL']['dev']
     return CPR_URL
 
 def get_network_used(env, sub_network, vlan_id):

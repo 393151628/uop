@@ -115,6 +115,7 @@ class Reservation(Resource):
         """
         parser = reqparse.RequestParser()
         parser.add_argument('resource_id', type=str)
+        parser.add_argument('crp_url', type=str)
         parser.add_argument('compute_list', type=list, location='json')
         args = parser.parse_args()
         ret, code = reservation_post(args)
