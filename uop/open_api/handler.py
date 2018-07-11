@@ -24,6 +24,7 @@ def approval_post(args):
         if code == 200:
             setattr(args, 'resource_id', res_id)
             reservation_post(args)
+            Log.logger.info("2222222222222222222222222211111111111111111111111111111111111122223333333333333333333333322222222 {}".format(ret))
         else:
             Log.logger.info("111111111111111111111111111111111 {}".format(ret))
     except Exception as e:
@@ -66,7 +67,8 @@ def resource_db_post(args):
             approval_info_dict["project_id"] = args.cmdb2_project_id
             approval_info_dict["department"] = args.department
             approval_info_dict["user_id"] = args.user_id
-            approval_list_post(approval_info_list)
+            ret,code = approval_list_post(approval_info_list)
+            Log.logger.info("2222222222222222222222222222223333333333333333333333322222222 {}".format(ret))
         else:
             Log.logger.info("22222222222222222222222222222222222222 {}".format(ret))
     except Exception as e:
