@@ -56,6 +56,7 @@ def resource_db_post(args):
         resource_info_dict["compute_list"] = args.compute_list
         resource_info_dict["cloud"] = args.cloud
         resource_info_dict["domain"] = args.domain
+        resource_info_dict["resource_type"] = args.resource_type
         resource_info_list.append(resource_info_dict)
         ret, code = resource_post(resource_info_list)
         if code == 200:

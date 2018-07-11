@@ -629,6 +629,7 @@ class ResourceProviderCallBack(Resource):
                 ip = instance.get('ip')
                 os_vol_id = instance.get('os_vol_id')
                 physical_server = instance.get('physical_server')
+                os_type = "docker"
                 if resource_type == "app":
                     os_type = "docker"
                 if resource_type == "kvm":
