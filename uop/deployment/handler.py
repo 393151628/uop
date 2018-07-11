@@ -145,7 +145,7 @@ def get_resource_by_id(resource_id):
 
 
 def deploy_to_crp(deploy_item, environment, database_password, appinfo,
-                  disconf_server_info,deploy_type,deploy_name=None):
+                  disconf_server_info,deploy_type,deploy_name=None,crp_url=None):
     resource_id = deploy_item.resource_id
     res_obj = ResourceModel.objects.get(res_id=resource_id)
     data = {
@@ -218,8 +218,11 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
     err_msg = None
     result = None
     try:
-        CPR_URL = get_CRP_url(res_obj['env'])
-        crp_url = CPR_URL + "api/deploy/deploys"
+        if crp_url:
+            _crp_url = crp_url
+        else:
+            _crp_url = get_CRP_url(res_obj['env'])
+        _url = _crp_url + "api/deploy/deploys"
         headers = {
             'Content-Type': 'application/json',
         }
@@ -245,7 +248,7 @@ def deploy_to_crp(deploy_item, environment, database_password, appinfo,
         data_str = json.dumps(data)
         Log.logger.debug("Data args is " + str(data))
         Log.logger.debug("Data args is " + str(data_str))
-        result = requests.post(url=crp_url, headers=headers, data=data_str)
+        result = requests.post(url=_url, headers=headers, data=data_str)
         result = json.dumps(result.json())
     except requests.exceptions.ConnectionError as rq:
         err_msg = str(rq)
@@ -529,7 +532,7 @@ def admin_approve_allow(args):
                  args.app_image]
     appinfo = []
     if args.action == "admin_approve_allow":
-        cmdb_url = current_app.config['CMDB_URL']
+        cmdb_url = None
         appinfo = attach_domain_ip(app_image, resource, cmdb_url)
     # 如果是k8s应用修改外层nginx信息
     if cloud == '2' and resource_type == "app":
@@ -546,7 +549,7 @@ def admin_approve_allow(args):
     ##推送到crp
     deploy_type = "deploy"
     err_msg, result = deploy_to_crp(deploy_obj, args.environment,
-                                    args.database_password, appinfo, disconf_server_info, deploy_type)
+                                    args.database_password, appinfo, disconf_server_info, deploy_type,args.crp_url)
     if err_msg:
         deploy_obj.deploy_result = 'deploy_fail'
         message = 'deploy_fail'
