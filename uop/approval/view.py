@@ -40,7 +40,8 @@ class ApprovalList(Resource):
             type=list,
             location="json")
         args = parser.parse_args()
-        ret, code =approval_list_post(args)
+        approval_info_list = args.approval_info_list
+        ret, code =approval_list_post(approval_info_list)
         return ret, code
 
 

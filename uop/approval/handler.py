@@ -149,12 +149,11 @@ def deal_crp_data(resource,set_flag):
     return data
 
 
-def approval_list_post(args):
+def approval_list_post(approval_info_list):
     code = 200
     res = ""
     msg = {}
     try:
-        approval_info_list = args.approval_info_list
         for info in approval_info_list:
             approval_id = str(uuid.uuid1())
             resource_id = info.get("resource_id", "")
@@ -236,7 +235,7 @@ def approval_info_post(args,res_id):
             approval = approvals[0]
             approval.approve_uid = args.approve_uid
             approval.approve_date = datetime.datetime.now()
-            approval.annotations = args.annotations
+            approval.annotations = args.annotations if args.annotations else ""
 
             if args.agree:
                 approval.approval_status = "success"
