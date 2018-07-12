@@ -106,7 +106,7 @@ class ResourceOpenApi(Resource):
                 deploy = deploys[0]
                 deploy_result = deploy.deploy_result
                 deployment_name = deploy.resource_name
-                deploy_time = deploy.created_time
+                deploy_time = str(deploy.created_time)
                 if deploy_result == "deploy_success":
                     deployment_status = "available"
                     resource_id = deploy.resource_id
