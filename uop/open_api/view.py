@@ -99,34 +99,38 @@ class ResourceOpenApi(Resource):
         resource_name = args.resource_name
         try:
 
-            deploy = Deployment.objects.filter(deploy_name=deploy_name,resource_name=resource_name)[0]
-            deploy_result = deploy.deploy_result
-            deployment_name = deploy.resource_name
-            deploy_time = deploy.created_time
-            if deploy_result == "deploy_success":
-                deployment_status = "available"
-                resource_id = deploy.resource_id
-                resource = ResourceModel.objects.get(res_id=resource_id)
-                os_ins_ip_list = resource.os_ins_ip_list
-                for os_ins in os_ins_ip_list:
-                    res = {}
-                    res["pod_name"] = os_ins.os_ins_id
-                    res["node_name"] = os_ins.physical_server
-                    res["pod_ip"] = os_ins.ip
-                    res["pod_status"] = "running"
-                    pod_info.append(res)
+            deploys = Deployment.objects.filter(deploy_name=deploy_name,resource_name=resource_name)
+            if deploys:
+                deploy = deploys[0]
+                deploy_result = deploy.deploy_result
+                deployment_name = deploy.resource_name
+                deploy_time = deploy.created_time
+                if deploy_result == "deploy_success":
+                    deployment_status = "available"
+                    resource_id = deploy.resource_id
+                    resource = ResourceModel.objects.get(res_id=resource_id)
+                    os_ins_ip_list = resource.os_ins_ip_list
+                    for os_ins in os_ins_ip_list:
+                        res = {}
+                        res["pod_name"] = os_ins.os_ins_id
+                        res["node_name"] = os_ins.physical_server
+                        res["pod_ip"] = os_ins.ip
+                        res["pod_status"] = "running"
+                        pod_info.append(res)
+                else:
+                    deployment_status = "unavailable"
             else:
                 deployment_status = "unavailable"
+                deployment_name = ""
+                deploy_time = ""
+            data["deployment_name"] = deployment_name
+            data["deployment_status"] = deployment_status
+            data["deploy_time"] = deploy_time
+            data["pod_info"] = pod_info
         except Exception as e:
             code = 500
             msg = "Get deployment info error {e}".format(e=str(e))
-            deployment_status = "unavailable"
-            deployment_name = ""
-            deploy_time = ""
-        data["deployment_name"] = deployment_name
-        data["deployment_status"] = deployment_status
-        data["deploy_time"] = deploy_time
-        data["pod_info"] = pod_info
+            data = "Error"
         ret = response_data(code, msg, data)
         return ret, code
 
