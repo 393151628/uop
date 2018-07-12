@@ -38,6 +38,10 @@ def get_item_id(project_name):
                         return code, msg, cmdb2_project_id, module_id, business_id,project_name,module_name,business_name
                     else:
                         continue
+                else:
+                    continue
+            else:
+                continue
         else:
             code = 500
             msg = "{business_name}业务模块没有创建".format(business_name=business_name)
