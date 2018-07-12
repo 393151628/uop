@@ -5,7 +5,7 @@ from uop.open_api import open_blueprint
 from flask_restful import reqparse, Api, Resource
 from uop.open_api.handler import res_deploy,get_item_id
 from uop.util import response_data,get_CRP_url
-import time
+from uop.models import Deployment,ResourceModel
 
 resources_api = Api(open_blueprint)
 
@@ -86,42 +86,48 @@ class ResourceOpenApi(Resource):
         return ret,code
 
 
+    def get(self):
+        code = 200
+        msg = ''
+        data = {}
+        pod_info = []
+        parser = reqparse.RequestParser()
+        parser.add_argument('deploy_name', type=str, location='json')
+        args = parser.parse_args()
+        deploy_name = args.deploy_name
+        try:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            deploy = Deployment.objects.get(deploy_name=deploy_name)
+            deploy_result = deploy.deploy_result
+            deployment_name = deploy.resource_name
+            deploy_time = deploy.created_time
+            if deploy_result == "deploy_success":
+                deployment_status = "available"
+                resource_id = deploy.resource_id
+                resource = ResourceModel.objects.get(res_id=resource_id)
+                os_ins_ip_list = resource.os_ins_ip_list
+                for os_ins in os_ins_ip_list:
+                    res = {}
+                    res["pod_name"] = os_ins.os_ins_id
+                    res["node_name"] = os_ins.physical_server
+                    res["pod_ip"] = os_ins.ip
+                    res["pod_status"] = "running"
+                    pod_info.append(res)
+            else:
+                deployment_status = "unavailable"
+        except Exception as e:
+            code = 500
+            msg = "Get deployment info error {e}".format(e=str(e))
+            data = "Error"
+            deployment_status = "unavailable"
+            deployment_name = ""
+            deploy_time = ""
+        data["deployment_name"] = deployment_name
+        data["deployment_status"] = deployment_status
+        data["deploy_time"] = deploy_time
+        data["pod_info"] = pod_info
+        ret = response_data(code, msg, data)
+        return ret, code
 
 
 resources_api.add_resource(ResourceOpenApi, '/resource')
