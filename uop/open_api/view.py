@@ -4,9 +4,11 @@
 from uop.open_api import open_blueprint
 from flask_restful import reqparse, Api, Resource
 from uop.open_api.handler import res_deploy,get_item_id
+from uop.util import response_data,get_CRP_url
+import time
 
 resources_api = Api(open_blueprint)
-from uop.util import response_data,get_CRP_url
+
 
 class ResourceOpenApi(Resource):
 
@@ -60,7 +62,12 @@ class ResourceOpenApi(Resource):
         args = parser.parse_args()
         crp_url = get_CRP_url(args.env)
         setattr(args, 'crp_url', crp_url)
-        i_code, i_msg, cmdb2_project_id, module_id, business_id,project_name,module_name,business_name = get_item_id(args.project_name)
+        project_name = args.project_name
+        env = args.env
+        tag = time.time().__str__()[2:10]
+        resource_name = "{project_name}-{env}-{tag}".format(project_name=project_name,env=env,tag=tag)
+        setattr(args, 'resource_name', resource_name)
+        i_code, i_msg, cmdb2_project_id, module_id, business_id,project_name,module_name,business_name = get_item_id(project_name)
         if i_code == 200:
             setattr(args, 'cmdb2_project_id', cmdb2_project_id)
             setattr(args, 'module_id', module_id)
