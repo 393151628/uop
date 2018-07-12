@@ -7,6 +7,8 @@ from uop.open_api.handler import res_deploy,get_item_id
 from uop.util import response_data,get_CRP_url
 from uop.models import Deployment,ResourceModel
 from uop.log import Log
+import requests
+import json
 
 resources_api = Api(open_blueprint)
 
@@ -101,7 +103,6 @@ class ResourceOpenApi(Resource):
         try:
 
             deploys = Deployment.objects.filter(deploy_name=deploy_name,resource_name=resource_name)
-            Log.logger.info("11111111111111111111111 {} {}".format(deploys,args))
             if deploys:
                 deploy = deploys[0]
                 deploy_result = deploy.deploy_result
@@ -125,6 +126,7 @@ class ResourceOpenApi(Resource):
                 deployment_status = "unavailable"
                 deployment_name = ""
                 deploy_time = ""
+            msg = "success"
             data["deployment_name"] = deployment_name
             data["deployment_status"] = deployment_status
             data["deploy_time"] = deploy_time
@@ -133,8 +135,55 @@ class ResourceOpenApi(Resource):
             code = 500
             msg = "Get deployment info error {e}".format(e=str(e))
             data = "Error"
+            Log.logger.error(msg)
+        ret = response_data(code, msg, data)
+        return ret, code
+
+class LogOpenApi(Resource):
+
+    def get(self):
+        code = 200
+        msg = ''
+        data = {}
+        parser = reqparse.RequestParser()
+        parser.add_argument('namespace', type=str)
+        parser.add_argument('resource_name', type=str)
+        parser.add_argument('env', type=str)
+        parser.add_argument('pod_name', type=str)
+        args = parser.parse_args()
+        namespace = args.namespace
+        resource_name = args.resource_name
+        pod_name = args.pod_name
+        env = args.env
+        try:
+            Data = {}
+            crp_url = get_CRP_url(env)
+            url = crp_url + "api/openstack/docker/logs/"
+            Data["resource_name"] = resource_name
+            Data["osid"] = pod_name
+            Data["namespace"] = namespace
+            Data["cloud"] = "2"
+            data_str = json.dumps(Data)
+            ret = requests.post(url, data=data_str, headers={'Content-Type': 'application/json'}, timeout=60)
+            res = ret.json()
+            code = res.get("code")
+            if code == 200:
+                logs = res.get("result").get("logs")
+                msg = "Get log success"
+            else:
+                code = 400
+                logs = ""
+                msg = "Get log failed"
+            data["logs"] = logs
+        except Exception as e:
+            msg = "Get log error {e}".format(e=str(e))
+            code = 500
+            data = "Error"
+            Log.logger.error(msg)
         ret = response_data(code, msg, data)
         return ret, code
 
 
+
 resources_api.add_resource(ResourceOpenApi, '/resource')
+resources_api.add_resource(LogOpenApi, '/log')
