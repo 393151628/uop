@@ -5,9 +5,49 @@ import uuid
 from uop.deployment.handler import admin_approve_allow,save_to_db
 from uop.resources.handler import resource_post
 from uop.approval.handler import approval_info_post,approval_list_post,reservation_post
-from uop.models import Deployment,ResourceModel
+from uop.models import Deployment,ResourceModel,ItemInformation
 from uop.util import async
 from uop.log import Log
+
+
+
+def get_item_id(project_name):
+    msg = ''
+    code = 200
+    cmdb2_project_id = ""
+    module_id = ""
+    business_id = ""
+    module_name = ""
+    business_name = "凤凰计划二期"
+    try:
+        items_p = ItemInformation.objects.filter(item_name=project_name)
+        for item_p in items_p:
+            cmdb2_project_id = item_p.cmdb2_project_id
+            p_item_relation = item_p.item_relation
+            if cmdb2_project_id:
+                item_m = ItemInformation.objects.get(cmdb2_project_id=p_item_relation)
+                m_cmdb2_project_id = item_m.cmdb2_project_id
+                m_item_relation = item_m.item_relation
+                if m_cmdb2_project_id:
+                    module_id = m_cmdb2_project_id
+                    module_name =item_m.item_name
+                    item_b = ItemInformation.objects.get(cmdb2_project_id=m_item_relation)
+                    b_cmdb2_project_id = item_b.cmdb2_project_id
+                    if b_cmdb2_project_id and item_b.item_name == business_name:
+                        business_id  = b_cmdb2_project_id
+                        return code, msg, cmdb2_project_id, module_id, business_id,project_name,module_name,business_name
+                    else:
+                        continue
+        else:
+            code = 500
+            msg = "{business_name}业务模块没有创建".format(business_name=business_name)
+            return code,msg,cmdb2_project_id,module_id,business_id,project_name,module_name,business_name
+    except Exception as e:
+        code = 500
+        msg = "工程{project_name}没有在{business_name}创建".format(project_name=project_name,business_name=business_name)
+    return  code,msg,cmdb2_project_id,module_id,business_id,project_name,module_name,business_name
+
+
 
 def approval_post(args):
     """
