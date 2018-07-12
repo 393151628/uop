@@ -20,7 +20,7 @@ def get_item_id(project_name):
     module_name = ""
     business_name = "凤凰计划二期"
     try:
-        items_p = ItemInformation.objects.filter(item_name=project_name)
+        items_p = ItemInformation.objects.filter(item_name=project_name).order_by("-create_date")
         for item_p in items_p:
             cmdb2_project_id = item_p.cmdb2_project_id
             p_item_relation = item_p.item_relation
