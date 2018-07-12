@@ -88,7 +88,7 @@ def resource_db_post(args):
         resource_info_dict["user_name"] = args.user_name
         resource_info_dict["user_id"] = args.user_id
         resource_info_dict["env"] = args.env
-        resource_info_dict["formStatus"] = args.formStatus
+        resource_info_dict["formStatus"] = "submit"
         resource_info_dict["resource_list"] = args.resource_list
         resource_info_dict["compute_list"] = args.compute_list
         resource_info_dict["cloud"] = args.cloud
