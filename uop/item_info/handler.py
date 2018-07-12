@@ -541,7 +541,8 @@ def subgrath_data(args):
                                      user=get_pro("user", property),
                                      item_relation=last_instance_id,
                                      user_id=get_pro("user_id", property),
-                                     item_name=get_pro("baseInfo", property))
+                                     item_name=get_pro("baseInfo", property),
+                                     cmdb2_project_id=newid)
             else:
                 ii = ItemInformation(item_id=newid,
                                      item_code=code_id[next_model_id],
@@ -550,7 +551,7 @@ def subgrath_data(args):
                                      item_relation=last_instance_id,
                                      user_id=get_pro("user_id", property),
                                      item_name=get_pro("baseInfo", property),
-
+                                     cmdb2_project_id=newid,
                                      project_status=get_pro("status", property),
                                      Chinese_name=get_pro("Chinese_name", property),
                                      version=get_pro("version", property),
