@@ -24,9 +24,6 @@ def approval_post(args):
         if code == 200:
             setattr(args, 'resource_id', res_id)
             reservation_post(args)
-            Log.logger.info("2222222222222222222222222211111111111111111111111111111111111122223333333333333333333333322222222 {}".format(ret))
-        else:
-            Log.logger.info("111111111111111111111111111111111 {}".format(ret))
     except Exception as e:
         raise Exception(e)
     return code
@@ -70,9 +67,6 @@ def resource_db_post(args):
             approval_info_dict["user_id"] = args.user_id
             approval_info_list.append(approval_info_dict)
             ret,code = approval_list_post(approval_info_list)
-            Log.logger.info("2222222222222222222222222222223333333333333333333333322222222 {}".format(ret))
-        else:
-            Log.logger.info("22222222222222222222222222222222222222 {}".format(ret))
     except Exception as e:
         raise Exception(e)
     return code
@@ -81,13 +75,11 @@ def resource_db_post(args):
 def deployment_post(args):
     code = 200
     try:
-        Log.logger.info("666666666666666666666666666666666666666666666666666 {}".format(args))
         resource = ResourceModel.objects.get(resource_name=args.resource_name)
         res_id = resource.res_id
         project_id = resource.cmdb2_project_id
         environment = resource.env
         app_image = [eval(resource.compute_list[0].to_json())]
-        Log.logger.info("77777777777777777777777777777777777777777777777777777777 {}".format(app_image))
         uid = str(uuid.uuid1())
         setattr(args, 'project_id', project_id)
         setattr(args, 'environment', environment)
@@ -97,11 +89,9 @@ def deployment_post(args):
         # if not resource_id:
         setattr(args, 'resource_id', res_id)
         message = save_to_db(args)
-        Log.logger.info("88888888888888888888888888888 {}".format(message))
         if message == 'save_to_db success':
             setattr(args, 'dep_id', uid)
             admin_approve_allow(args)
-            Log.logger.info("999999999999999999999999999999")
     except Exception as e:
         raise Exception("deployment_post {}".format(e))
     return code
@@ -113,9 +103,7 @@ def res_deploy(args):
     msg = ""
     try:
         #将信息存放到resource 表
-        Log.logger.info("333333333333333333333334444444444444444444444444444444444")
         deploys = Deployment.objects.filter(resource_name=args.resource_name)
-        Log.logger.info("3333333333333333333333344444444444444444444444444444444445555555 {}".format(deploys))
         if deploys:
             #直接部署
             deployment_post(args)
@@ -124,9 +112,7 @@ def res_deploy(args):
             resources = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,reservation_status="set_success")
             if not resources:
                 resource_db_post(args)
-                Log.logger.info("33333333333333333333333333333333333333333")
                 approval_post(args)
-                Log.logger.info("444444444444444444444444444444444444444444444")
             while 1:
                 resource = ResourceModel.objects.get(resource_name=args.resource_name)
                 if resource.reservation_status == "set_success":
