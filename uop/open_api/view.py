@@ -93,11 +93,13 @@ class ResourceOpenApi(Resource):
         pod_info = []
         parser = reqparse.RequestParser()
         parser.add_argument('deploy_name', type=str, location='json')
+        parser.add_argument('resource_name', type=str, location='json')
         args = parser.parse_args()
         deploy_name = args.deploy_name
+        resource_name = args.resource_name
         try:
 
-            deploy = Deployment.objects.get(deploy_name=deploy_name)
+            deploy = Deployment.objects.filter(deploy_name=deploy_name,resource_name=resource_name)[0]
             deploy_result = deploy.deploy_result
             deployment_name = deploy.resource_name
             deploy_time = deploy.created_time
@@ -118,7 +120,6 @@ class ResourceOpenApi(Resource):
         except Exception as e:
             code = 500
             msg = "Get deployment info error {e}".format(e=str(e))
-            data = "Error"
             deployment_status = "unavailable"
             deployment_name = ""
             deploy_time = ""
