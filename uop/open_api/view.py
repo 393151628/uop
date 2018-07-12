@@ -64,9 +64,9 @@ class ResourceOpenApi(Resource):
         setattr(args, 'crp_url', crp_url)
         project_name = args.project_name
         env = args.env
-        tag = time.time().__str__()[2:10]
-        resource_name = "{project_name}-{env}-{tag}".format(project_name=project_name,env=env,tag=tag)
-        setattr(args, 'resource_name', resource_name)
+        # tag = time.time().__str__()[2:10]
+        # resource_name = "{project_name}-{env}-{tag}".format(project_name=project_name,env=env,tag=tag)
+        # setattr(args, 'resource_name', resource_name)
         i_code, i_msg, cmdb2_project_id, module_id, business_id,project_name,module_name,business_name = get_item_id(project_name)
         if i_code == 200:
             setattr(args, 'cmdb2_project_id', cmdb2_project_id)
