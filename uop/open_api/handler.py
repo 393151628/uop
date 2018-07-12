@@ -120,6 +120,7 @@ def deployment_post(args):
         project_id = resource.cmdb2_project_id
         environment = resource.env
         app_image = [dict(eval(resource.compute_list[0].to_json()),domain_ip=args.domain_ip,certificate=args.certificate,named_url=args.named_url)]
+        Log.logger.info("1111111111111111111111111111111111111111111111111111111111 {}".format(app_image))
         uid = str(uuid.uuid1())
         setattr(args, 'project_id', project_id)
         setattr(args, 'environment', environment)
