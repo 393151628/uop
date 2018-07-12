@@ -6,6 +6,7 @@ from flask_restful import reqparse, Api, Resource
 from uop.open_api.handler import res_deploy,get_item_id
 from uop.util import response_data,get_CRP_url
 from uop.models import Deployment,ResourceModel
+from uop.log import Log
 
 resources_api = Api(open_blueprint)
 
@@ -100,6 +101,7 @@ class ResourceOpenApi(Resource):
         try:
 
             deploys = Deployment.objects.filter(deploy_name=deploy_name,resource_name=resource_name)
+            Log.logger.info("11111111111111111111111 {} {}".format(deploys,args))
             if deploys:
                 deploy = deploys[0]
                 deploy_result = deploy.deploy_result
