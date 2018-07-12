@@ -93,8 +93,8 @@ class ResourceOpenApi(Resource):
         data = {}
         pod_info = []
         parser = reqparse.RequestParser()
-        parser.add_argument('deploy_name', type=str, location='json')
-        parser.add_argument('resource_name', type=str, location='json')
+        parser.add_argument('deploy_name', type=str)
+        parser.add_argument('resource_name', type=str)
         args = parser.parse_args()
         deploy_name = args.deploy_name
         resource_name = args.resource_name
