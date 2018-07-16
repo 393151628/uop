@@ -153,18 +153,16 @@ def res_deploy(args):
         if deploys and resources:
             #直接部署
             deployment_post(args)
-        else:
+        elif not deploys and not resources:
             #先创建资源再部署
-
-            if not resources:
-                resource_db_post(args)
-                approval_post(args)
+            resource_db_post(args)
+            approval_post(args)
             while 1:
-                resources = ResourceModel.objects.filter(resource_name=args.resource_name,business_name="凤凰计划二期")
-                if resources and  resources[0].reservation_status == "set_success":
+                resource = ResourceModel.objects.filter(resource_name=args.resource_name,business_name="凤凰计划二期")
+                if resource and  resource[0].reservation_status == "set_success":
                     deployment_post(args)
                     break
-                elif resources and resources[0].reservation_status == "set_fail":break
+                elif resource and resource[0].reservation_status == "set_fail":break
     except Exception as e:
         raise Exception(e)
         code = 500
