@@ -150,6 +150,7 @@ def res_deploy(args):
         deploys = Deployment.objects.filter(resource_name=args.resource_name,business_name="凤凰计划二期")
         resources = ResourceModel.objects.filter(resource_name=args.resource_name, is_deleted=0,
                                                  reservation_status="set_success", business_name="凤凰计划二期")
+        Log.logger.info("111111111111111111111111111111111 {} 2222222222222222222222 {}".format(deploys,resources))
         if deploys and resources:
             #直接部署
             deployment_post(args)
