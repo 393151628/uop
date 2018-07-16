@@ -61,7 +61,7 @@ def approval_post(args):
     """
     code = 200
     try:
-        resource = ResourceModel.objects.get(resource_name=args.resource_id)
+        resource = ResourceModel.objects.get(resource_id=args.resource_id)
         res_id = resource.res_id
         setattr(args, 'approve_uid', args.user_id)
         ret, code = approval_info_post(args, res_id)
@@ -120,7 +120,7 @@ def resource_db_post(args):
 def deployment_post(args):
     code = 200
     try:
-        resource = ResourceModel.objects.get(resource_name=args.resource_id)
+        resource = ResourceModel.objects.get(resource_id=args.resource_id)
         # res_id = resource.res_id
         project_id = resource.cmdb2_project_id
         environment = resource.env
@@ -162,7 +162,7 @@ def res_deploy(args):
             setattr(args, 'resource_id', resource_id)
             approval_post(args)
             while 1:
-                resource = ResourceModel.objects.get(resource_name=args.resource_id)
+                resource = ResourceModel.objects.get(resource_id=args.resource_id)
                 if resource and  resource[0].reservation_status == "set_success":
                     deployment_post(args)
                     break
