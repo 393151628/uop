@@ -749,11 +749,13 @@ def delete_resource_deploy(res_id):
             reservation_status = resources.reservation_status
             #如果预留失败的直接删除数据库的记录
             if reservation_status in ["set_fail","unreserved","approval_fail","revoke","reserving"]:
-                if reservation_status == "reserving" and cloud == "2" and resource_type == "app":
+                if reservation_status in ["reserving","set_fail"] and cloud == "2" and resource_type == "app":
                     resources.reservation_status = "deleting"
                     resources.save()
                 else:
-                    resources.update(is_deleted=1,deleted_date=datetime.datetime.now(),reservation_status="delete_success")
+                    deleted_date = datetime.datetime.now()
+                    new_resource_name = resources.resource_name + '_' + str(deleted_date)[20:-1]
+                    resources.update(resource_name=new_resource_name,is_deleted=1,deleted_date=deleted_date,reservation_status="delete_success")
             else:
                 resources.reservation_status = "deleting"
                 resources.save()

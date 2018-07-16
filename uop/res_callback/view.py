@@ -1207,7 +1207,9 @@ class ResourceDeleteCallBack(Resource):
                 elif set_flag == "res":
                     if len(status_records) == del_count and "fail" not in status_list:
                         cmdb_p_code = resource.cmdb_p_code
-                        resource.update(is_deleted=1,deleted_date=datetime.datetime.now(),reservation_status="delete_success")
+                        deleted_date = datetime.datetime.now()
+                        new_resource_name = resource.resource_name + '_'+ str(deleted_date)[20:-1]
+                        resource.update(resource_name=new_resource_name,is_deleted=1,deleted_date=datetime.datetime.now(),reservation_status="delete_success")
                         for dep in deps:
                             dep.update(deploy_result="delete_success")
                         # 回写CMDB
