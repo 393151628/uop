@@ -163,10 +163,10 @@ def res_deploy(args):
             approval_post(args)
             while 1:
                 resource = ResourceModel.objects.get(res_id=args.resource_id)
-                if resource and  resource[0].reservation_status == "set_success":
+                if resource and  resource.reservation_status == "set_success":
                     deployment_post(args)
                     break
-                elif resource and resource[0].reservation_status == "set_fail":break
+                elif resource and resource.reservation_status == "set_fail":break
     except Exception as e:
         raise Exception(e)
         code = 500
