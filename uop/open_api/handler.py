@@ -79,6 +79,7 @@ def resource_db_post(args):
     :return:
     """
     code = 200
+    res_id = ''
     try:
         resource_info_list = []
         resource_info_dict = {}
