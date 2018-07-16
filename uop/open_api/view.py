@@ -39,8 +39,8 @@ class ResourceOpenApi(Resource):
         parser.add_argument('lb_methods', type=str)
         parser.add_argument('namespace', type=str)
         parser.add_argument('host_mapping', type=list, location='json')
-        parser.add_argument('network_id', type=str)
-        parser.add_argument('scheduler_zone', type=str)
+        parser.add_argument('network_id', type=str,default="")
+        parser.add_argument('scheduler_zone', type=str,default="")
         parser.add_argument('agree', type=bool, default=True)
         parser.add_argument('annotations', type=str,default="")
 
