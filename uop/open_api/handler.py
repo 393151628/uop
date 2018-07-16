@@ -61,7 +61,7 @@ def approval_post(args):
     """
     code = 200
     try:
-        resource = ResourceModel.objects.get(resource_name=args.resource_name)
+        resource = ResourceModel.objects.get(resource_name=args.resource_id)
         res_id = resource.res_id
         setattr(args, 'approve_uid', args.user_id)
         ret, code = approval_info_post(args, res_id)
@@ -103,8 +103,8 @@ def resource_db_post(args):
         if code == 200:
             approval_info_list = []
             approval_info_dict = {}
-            resource = ResourceModel.objects.get(resource_name=args.resource_name)
-            res_id = resource.res_id
+            resource = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,business_name="凤凰计划二期")
+            res_id = resource[0].res_id
             approval_info_dict["resource_id"] = res_id
             approval_info_dict["project_id"] = args.cmdb2_project_id
             approval_info_dict["department"] = args.department
@@ -113,14 +113,14 @@ def resource_db_post(args):
             ret,code = approval_list_post(approval_info_list)
     except Exception as e:
         raise Exception(e)
-    return code
+    return code,res_id
 
 
 def deployment_post(args):
     code = 200
     try:
-        resource = ResourceModel.objects.get(resource_name=args.resource_name)
-        res_id = resource.res_id
+        resource = ResourceModel.objects.get(resource_name=args.resource_id)
+        # res_id = resource.res_id
         project_id = resource.cmdb2_project_id
         environment = resource.env
         app_image = [dict(eval(resource.compute_list[0].to_json()),domain_ip=args.domain_ip,certificate=args.certificate,named_url=args.named_url)]
@@ -131,7 +131,7 @@ def deployment_post(args):
         setattr(args, 'uid', uid)
         # resource_id = getattr(args, 'resource_id')
         # if not resource_id:
-        setattr(args, 'resource_id', res_id)
+        # setattr(args, 'resource_id', res_id)
         message = save_to_db(args)
         if message == 'save_to_db success':
             setattr(args, 'dep_id', uid)
@@ -150,16 +150,18 @@ def res_deploy(args):
         deploys = Deployment.objects.filter(resource_name=args.resource_name,business_name="凤凰计划二期")
         resources = ResourceModel.objects.filter(resource_name=args.resource_name, is_deleted=0,
                                                  reservation_status="set_success", business_name="凤凰计划二期")
-        Log.logger.info("111111111111111111111111111111111 {} 2222222222222222222222 {}".format(deploys,resources))
         if deploys and resources:
             #直接部署
+            resource_id = resources[0].res_id
+            setattr(args, 'resource_id', resource_id)
             deployment_post(args)
         elif not resources:
             #先创建资源再部署
-            resource_db_post(args)
+            code,resource_id =resource_db_post(args)
+            setattr(args, 'resource_id', resource_id)
             approval_post(args)
             while 1:
-                resource = ResourceModel.objects.filter(resource_name=args.resource_name,business_name="凤凰计划二期")
+                resource = ResourceModel.objects.get(resource_name=args.resource_id)
                 if resource and  resource[0].reservation_status == "set_success":
                     deployment_post(args)
                     break
