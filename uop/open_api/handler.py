@@ -44,7 +44,7 @@ def get_item_id(project_name):
                 continue
         else:
             code = 500
-            msg = "{business_name}业务模块没有创建".format(business_name=business_name)
+            msg = "工程{project_name}没有在{business_name}创建".format(project_name=project_name, business_name=business_name)
             return code,msg,cmdb2_project_id,module_id,business_id,project_name,module_name,business_name
     except Exception as e:
         code = 500
@@ -153,16 +153,16 @@ def res_deploy(args):
             deployment_post(args)
         else:
             #先创建资源再部署
-            resources = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,reservation_status="set_success")
+            resources = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,reservation_status="set_success",business_name="凤凰计划二期")
             if not resources:
                 resource_db_post(args)
                 approval_post(args)
             while 1:
-                resource = ResourceModel.objects.get(resource_name=args.resource_name)
-                if resource.reservation_status == "set_success":
+                resources = ResourceModel.objects.filter(resource_name=args.resource_name,business_name="凤凰计划二期")
+                if resources and  resources[0].reservation_status == "set_success":
                     deployment_post(args)
                     break
-                elif resource.reservation_status == "set_fail":break
+                elif resources and resources[0].reservation_status == "set_fail":break
     except Exception as e:
         raise Exception(e)
         code = 500
