@@ -996,7 +996,7 @@ def resource_post(resource_info_list):
         try:
             resource_application.save()
         except Exception as e:
-            code = 200
+            code = 400
             res = {
                 "code": code,
                 "result": {

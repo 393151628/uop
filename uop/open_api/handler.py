@@ -104,7 +104,8 @@ def resource_db_post(args):
         if code == 200:
             approval_info_list = []
             approval_info_dict = {}
-            resource = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,business_name="凤凰计划二期")
+            resource_name = args.resource_name
+            resource = ResourceModel.objects.filter(resource_name=resource_name,is_deleted=0,business_name="凤凰计划二期")
             res_id = resource[0].res_id
             approval_info_dict["resource_id"] = res_id
             approval_info_dict["project_id"] = args.cmdb2_project_id
@@ -113,7 +114,7 @@ def resource_db_post(args):
             approval_info_list.append(approval_info_dict)
             ret,code = approval_list_post(approval_info_list)
     except Exception as e:
-        raise Exception(e)
+        raise Exception("resource_db_post {e}".format(e=str(e)))
     return code,res_id
 
 
