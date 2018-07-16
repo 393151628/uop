@@ -113,6 +113,8 @@ def resource_db_post(args):
             approval_info_dict["user_id"] = args.user_id
             approval_info_list.append(approval_info_dict)
             ret,code = approval_list_post(approval_info_list)
+        else:
+            raise Exception("resource_post error {ret}".format(ret=str(ret)))
     except Exception as e:
         raise Exception("resource_db_post {e}".format(e=str(e)))
     return code,res_id
