@@ -148,12 +148,14 @@ def res_deploy(args):
     try:
         #将信息存放到resource 表
         deploys = Deployment.objects.filter(resource_name=args.resource_name)
-        if deploys:
+        resources = ResourceModel.objects.filter(resource_name=args.resource_name, is_deleted=0,
+                                                 reservation_status="set_success", business_name="凤凰计划二期")
+        if deploys and resources:
             #直接部署
             deployment_post(args)
         else:
             #先创建资源再部署
-            resources = ResourceModel.objects.filter(resource_name=args.resource_name,is_deleted=0,reservation_status="set_success",business_name="凤凰计划二期")
+
             if not resources:
                 resource_db_post(args)
                 approval_post(args)
